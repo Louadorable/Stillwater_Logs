@@ -25,7 +25,8 @@
 # speaker:StillWater_MoitoringStation@gov.org
 # title:Issue
 # playerEmail:true
-Test
+Test, whee woo!
+Papa
 # next_knot:email2
 -> wait_5sec 
 
