@@ -156,6 +156,7 @@ public class TypingManager : MonoBehaviour
 
     public void Enable()
     {
+        // prevent any existing game object hijacking when return pressed during typing
         EventSystem.current.SetSelectedGameObject(null);
         templateText.gameObject.SetActive(true);
     }
