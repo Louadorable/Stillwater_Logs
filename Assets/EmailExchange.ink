@@ -25,10 +25,10 @@
 # speaker:StillWater_MoitoringStation@gov.org
 # title:Issue
 # playerEmail:true
-Test, whee woo!
-Papa
 # next_knot:email2
--> wait_5sec 
+Test, whee woo!
+Papa #stop
+-> wait_5sec
 
 == email2 ==
 # speaker:MorriganSite_AutomatedReply@gov.org

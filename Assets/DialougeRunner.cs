@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using TMPro;
 using Ink.Runtime;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class SimpleInkDialogue : MonoBehaviour
 {
@@ -51,6 +52,9 @@ public class SimpleInkDialogue : MonoBehaviour
     //Current story line
     private string line;
 
+    //Current tags
+    private List<string> tags;
+
     //Handles Player Typing
     public TypingManager typingManager;
 
@@ -90,8 +94,8 @@ public class SimpleInkDialogue : MonoBehaviour
 
     void Start()
     {
-        story = new Story(inkJSON.text);
         Debug.Log("inkJSON.text: " + inkJSON.text);
+        story = new Story(inkJSON.text);
         Debug.Log("story: " + story);
         story.ChoosePathString("default");
         ShowNextLine();
@@ -113,6 +117,7 @@ public class SimpleInkDialogue : MonoBehaviour
         story.ChoosePathString("email1");
         ShowNextLine();
     }
+
     void OnSenderButtonClicked()
     {
         Debug.Log("Sending!");
@@ -156,11 +161,13 @@ public class SimpleInkDialogue : MonoBehaviour
         if (story == null) return;
         if (!story.canContinue) return;
 
-        line = story.Continue().Trim();
+        //line = story.Continue().trim();
+        (line, tags) = GetWholeKnot();
+        Debug.Log("tags: " + string.Join(", ", tags));
 
         HandleTags();
 
-        Debug.Log("LINE: " + line);
+        Debug.Log("LINE: [" + line + "]");
         Debug.Log("STATE: " + currentState);
         //dialogueText.text = line;
         //SpawnPopup(currentSpeaker, currentTitle, line);
@@ -231,12 +238,39 @@ public class SimpleInkDialogue : MonoBehaviour
 
     }
 
+    // Following function from CHAT-GPT
+    private (string text, List<string> tags) GetWholeKnot()
+    {
+        bool autoplay = true;
+        string text = "";
+        List<string> tags = new List<string>();
+
+        while (story.canContinue && autoplay)
+        {
+            string line = story.Continue().Trim();
+            if (!string.IsNullOrEmpty(line))
+            {
+                text += line + "\n";
+            }
+            tags.AddRange(story.currentTags);
+
+            // 🚨 Detect divert: we left the original knot/stitch
+            if (tags.Contains("stop"))
+            {
+                autoplay = false;
+            }
+        }
+
+        return (text.Trim(), tags);
+    }
+
     void HandleTags()
     {
 
         string expressionValue = null;
 
-        foreach (string tag in story.currentTags)
+        //foreach (string tag in story.currentTags)
+        foreach (string tag in tags)
         {
             Debug.Log("currentTag: "+ tag);
             string[] splitTag = tag.Split(':');
@@ -414,7 +448,7 @@ public class SimpleInkDialogue : MonoBehaviour
 
     void StartPlayerEmail(string line)
     {
-        currentState = EmailState.PlayerEmail;
+        //currentState = EmailState.PlayerEmail;
 
         storedEmailText = line;
 

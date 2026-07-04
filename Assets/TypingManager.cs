@@ -1,6 +1,7 @@
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class TypingManager : MonoBehaviour
 {
@@ -26,14 +27,17 @@ public class TypingManager : MonoBehaviour
             //Debug.Log("key: " + key.displayName + " wasPressedThisFrame: " + key.wasPressedThisFrame);
             if (key.wasPressedThisFrame)
             {
-                string keyString = key.displayName;
+                //string keyString = key.displayName;
 
-                if (string.IsNullOrEmpty(keyString))
-                    continue;
+                //if (string.IsNullOrEmpty(keyString))
+                //    continue;
 
                 // Convert to char
                 char c = TypedCharacter(keyboard, key.keyCode);
+                Debug.Log("Is \\n? " + (c == '\n'));
                 Debug.Log("keyString: " + c);
+                Debug.Log("target char " + targetText[currentIndex]);
+                Debug.Log("currentIndex "+ currentIndex);
 
                 if (c == targetText[currentIndex])
                 {
@@ -96,6 +100,7 @@ public class TypingManager : MonoBehaviour
         {
             case Key.Space: return ' ';
             case Key.Tab: return '\t';
+            case Key.Enter: return '\n';
 
             case Key.Minus: return shift ? '_' : '-';
             case Key.Equals: return shift ? '+' : '=';
@@ -151,6 +156,7 @@ public class TypingManager : MonoBehaviour
 
     public void Enable()
     {
+        EventSystem.current.SetSelectedGameObject(null);
         templateText.gameObject.SetActive(true);
     }
 }
