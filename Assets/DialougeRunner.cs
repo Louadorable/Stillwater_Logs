@@ -250,7 +250,7 @@ public class SimpleInkDialogue : MonoBehaviour
             string line = story.Continue().Trim();
             if (!string.IsNullOrEmpty(line))
             {
-                text += line + "\n";
+                text += line + "\n\n";
             }
             tags.AddRange(story.currentTags);
 
