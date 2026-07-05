@@ -32,22 +32,22 @@ Papa #stop
 
 == email2 ==
 # speaker:MorriganSite_AutomatedReply@gov.org
-# title:Problem
+# title:AUTOMATED - PLEASE DO NOT RESPOND TO THIS MESSAGE
 # incomingEmail:true
-AUTOMATED - PLEASE DO NOT RESPOND TO THIS MESSAGE
 
 Thank you Stillwater for messaging Command Site Morrigan.
 
 A reminder to:
 
 1) Always maintain secrecy when dealing with the general population. 
-
+  
 2) When consensus reality is violated directly in front of the general population:
 
-- Take them in for amnesticisation.
+. Take them in for amnesticisation.
 
-- Shoot them (if amnesics are not able to be administered in 48 hours)
+. Shoot them (if amnesics are not able to be administered in 48 hours)
 
+     
 3) Even if Civil Command Codes are known to External Affairs Department Operatives. ASK for permission to use them from SITE COMMAND. 
 
 Thank you.
