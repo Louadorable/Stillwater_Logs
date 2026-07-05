@@ -41,12 +41,12 @@ public class PopupUI : MonoBehaviour
 
     void OnPopupClicked()
     {
-        ToggleRead();
+        MarkRead();
     }
 
-    void ToggleRead()
+    void MarkRead()
     {
-        isRead = !isRead;
+        isRead = true;
 
         if (alertMarker != null)
             alertMarker.SetActive(!isRead);
