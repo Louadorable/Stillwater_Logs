@@ -1,17 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class PopupUI : MonoBehaviour
 {
     public TextMeshProUGUI speakerText;
     public TextMeshProUGUI titleText;
-    public TextMeshProUGUI bodyText;
     public GameObject alertMarker;
     public Button popupButton;
 
     private bool isRead = false;
     private bool isIncomingEmail;
+
+    private string bodyText = string.Empty;
+
+    public Action OnClickCallback;
 
     void Awake()
     {
@@ -22,15 +26,14 @@ public class PopupUI : MonoBehaviour
 
     public void SetData(string speaker, string title, string body, bool incoming)
     {
-        Debug.Log($"SetData incoming = {incoming}");
+        Debug.Log($"SetData incoming = {incoming}; body: " + body);
         if (speakerText != null)
             speakerText.text = speaker;
 
         if (titleText != null)
             titleText.text = title;
-
-        if (bodyText != null)
-            bodyText.text = body;
+        
+        bodyText = body;
 
         //Making sure Marker is visable when spawned
         if (alertMarker != null)
@@ -42,6 +45,8 @@ public class PopupUI : MonoBehaviour
     void OnPopupClicked()
     {
         MarkRead();
+        if (OnClickCallback != null)
+            OnClickCallback?.Invoke();
     }
 
     void MarkRead()

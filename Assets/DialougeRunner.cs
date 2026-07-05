@@ -181,7 +181,7 @@ public class SimpleInkDialogue : MonoBehaviour
             dialogueText.text = line; // <-- THIS is your missing viewport update
             emailAlertSFX.Play();
             bool incoming = isIncomingEmailTag;
-            SpawnPopup(currentSpeaker, currentTitle, line, incoming);
+            ShowEmail(line);
             return;
         }
 
@@ -414,10 +414,21 @@ public class SimpleInkDialogue : MonoBehaviour
         }
     }
 
+    void ChangeToViewEmailState(string text)
+    {
+        Debug.Log("ChangeToViewEmailState: " + text);
+        if (!string.IsNullOrEmpty(text))
+        {
+            storedEmailText = text;
+            dialogueText.text = text;
+        }
+    }
 
     void SpawnPopup(string speaker, string title, string text, bool isIncomingEmailTag)
     {
-        GameObject popup = Instantiate(EmailPopUp);
+        GameObject go = Instantiate(EmailPopUp);
+        PopupUI popup = go.GetComponent<PopupUI>();
+        popup.OnClickCallback = () => ChangeToViewEmailState(text);
         popup.transform.SetParent(EmailPopupContainer, false);
 
         popup.transform.SetAsFirstSibling();
