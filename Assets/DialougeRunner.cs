@@ -40,6 +40,7 @@ public class SimpleInkDialogue : MonoBehaviour
     public Button senderButton;
     public Button composeButton;
     public Button replyButton;
+    private bool composeOn = false;
 
     //Player Reply Option Text
     public Button OP1Button;
@@ -107,6 +108,8 @@ public class SimpleInkDialogue : MonoBehaviour
 
     void OnComposeButtonClicked()
     {
+        Debug.Log("ComponeOn check onCompose:"+ composeOn);
+        if (composeOn == false) return;
         Debug.Log("Composing!");
         story.ChoosePathString(nextKnot);
         ShowNextLine();
@@ -138,7 +141,7 @@ public class SimpleInkDialogue : MonoBehaviour
         if (currentState == EmailState.Wait)
         {
             var now = Time.time;
-            if (now >= waitUntil)
+            if (waitUntil != -1 && now >= waitUntil)
             {
                 // change to next state
                 waitUntil = -1;
@@ -150,6 +153,10 @@ public class SimpleInkDialogue : MonoBehaviour
                 ShowNextLine();
             }
 
+        }
+        if (currentState == EmailState.IncomingEmail)
+        {
+            ShowNextLine();
         }
 
     }
@@ -282,7 +289,15 @@ public class SimpleInkDialogue : MonoBehaviour
             string tagKey = splitTag[0].Trim();
             string tagValue = splitTag[1].Trim();
 
-            if(tagKey == "next_knot")
+
+
+            if (tagKey == "compose_on")
+            {
+                composeOn = tagValue == "true";
+                Debug.Log("ComposeOn:" + composeOn);
+            }
+
+            if (tagKey == "next_knot")
             {
                 nextKnot = tagValue;
                 Debug.Log("next_knot set to " + nextKnot);

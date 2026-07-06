@@ -1,19 +1,22 @@
 ==default==
-
+# compose_on:true
 -> DONE
 
 == wait_2sec ==
 # time:2
+# compose_on:false
 # speaker:_
 -> DONE
 
 == wait_5sec ==
 # time:5
+# compose_on:false
 # speaker:_
 -> DONE
 
 == wait_10sec ==
 # time:10
+# compose_on:false
 # speaker:_
 -> DONE
 
@@ -32,6 +35,8 @@ Papa #stop
 # title:AUTOMATED - PLEASE DO NOT RESPOND TO THIS MESSAGE
 # incomingEmail:true
 # next_knot:email3
+# compose_on:false
+
 Thank you Stillwater for messaging Command Site Morrigan.
 
 A reminder to:
@@ -49,7 +54,7 @@ A reminder to:
 
 Thank you.#stop
 
-->wait_10sec
+-> wait_10sec
 
 
 == email3 ==
@@ -57,6 +62,7 @@ Thank you.#stop
 # title:Stillwater Entity Has Awoken
 # incomingEmail:true
 # next_knot:email4
+# compose_on:true
 Hey dude, 
 
 Look, can you forward this yourself? I’m not working right now, k?
@@ -65,7 +71,7 @@ boss pissed me off.
 
 Bye.#stop
 
-->email4
+-> DONE
 
 ==email4==
 # speaker:StillWater_MoitoringStation@gov.org
@@ -82,7 +88,7 @@ Thank you.
 
 SW #stop
 
-->wait_5sec
+-> wait_5sec
 
 ==email5==
 # speaker:MorriganSite_GiovannniHaslo@gov.org
@@ -100,7 +106,7 @@ so, I’m quiet quittin. Using my workers rights as I should. I’ll get everyth
 
 you wanna be part of the child-eating 1% too? Then fuck off. #stop
 
-->choice1
+-> choice1
 
 
 ==choice1==
@@ -108,9 +114,9 @@ you wanna be part of the child-eating 1% too? Then fuck off. #stop
 # choice:_
 
 + Option 1) Fight it and Speak your mind.
-->email6_A
+-> email6_A
 + Option 2) Convince him you are also a slacker and just want someone else to deal with this.
-->email6_B
+-> email6_B
 
 == email6_A ==
 # speaker:StillWater_MoitoringStation@gov.org
