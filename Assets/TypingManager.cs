@@ -108,7 +108,13 @@ public class TypingManager : MonoBehaviour
             case Key.RightBracket: return shift ? '}' : ']';
             case Key.Backslash: return shift ? '|' : '\\';
             case Key.Semicolon: return shift ? ':' : ';';
-            case Key.Quote: return shift ? '"' : '\'';
+            //case Key.Quote: return shift ? '"' : '\'';
+
+            case Key.Quote:
+                return shift ? '@' : '\'';
+            case Key.Digit2:
+                return shift ? '"' : '2';
+
             case Key.Comma: return shift ? '<' : ',';
             case Key.Period: return shift ? '>' : '.';
             case Key.Slash: return shift ? '?' : '/';
