@@ -27,13 +27,14 @@ public class SimpleInkDialogue : MonoBehaviour
     public TextAsset inkJSON;
 
     public TextMeshProUGUI dialogueText;
-
+    
     private string storedEmailText = "";
 
     private int waitTime = 0;
     private float waitUntil = -1;  // -1 is not set
 
-    private string nextKnot = null;
+    private string nextKnot = "email1";
+   
 
     //Object Button
     public Button senderButton;
@@ -107,14 +108,14 @@ public class SimpleInkDialogue : MonoBehaviour
     void OnComposeButtonClicked()
     {
         Debug.Log("Composing!");
-        story.ChoosePathString("email1");
+        story.ChoosePathString(nextKnot);
         ShowNextLine();
     }
 
     void OnReplyButtonClicked()
     {
         Debug.Log("Replying!");
-        story.ChoosePathString("email1");
+        story.ChoosePathString(nextKnot);
         ShowNextLine();
     }
 
