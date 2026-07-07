@@ -22,6 +22,7 @@ public class SimpleInkDialogue : MonoBehaviour
     //Email UI Assets
     public GameObject emailAssetsUI;
     public GameObject LogoAssetsUI;
+    public bool popupPressed = false;
 
     //Ink Text Storage
     public TextAsset inkJSON;
@@ -108,7 +109,6 @@ public class SimpleInkDialogue : MonoBehaviour
 
     void OnComposeButtonClicked()
     {
-        Debug.Log("ComponeOn check onCompose:"+ composeOn);
         if (composeOn == false) return;
         Debug.Log("Composing!");
         story.ChoosePathString(nextKnot);
@@ -118,6 +118,7 @@ public class SimpleInkDialogue : MonoBehaviour
     void OnReplyButtonClicked()
     {
         Debug.Log("Replying!");
+        if (composeOn == false) return;
         story.ChoosePathString(nextKnot);
         ShowNextLine();
     }
@@ -158,6 +159,12 @@ public class SimpleInkDialogue : MonoBehaviour
         {
             ShowNextLine();
         }
+      
+        if (popupPressed == true)
+        {
+            LogoAssetsUI.SetActive(false);
+            popupPressed = false;
+        }
 
     }
 
@@ -183,9 +190,7 @@ public class SimpleInkDialogue : MonoBehaviour
         if (currentState == EmailState.IncomingEmail)
         {
             typingManager.Disable();
-            LogoAssetsUI.SetActive(false);
             storedEmailText = line;
-
             dialogueText.text = line; // <-- THIS is your missing viewport update
             emailAlertSFX.Play();
             bool incoming = isIncomingEmailTag;
@@ -444,6 +449,9 @@ public class SimpleInkDialogue : MonoBehaviour
     {
         GameObject go = Instantiate(EmailPopUp);
         PopupUI popup = go.GetComponent<PopupUI>();
+
+        popup.dialogue = this;
+
         popup.OnClickCallback = () => ChangeToViewEmailState(text);
         popup.transform.SetParent(EmailPopupContainer, false);
 

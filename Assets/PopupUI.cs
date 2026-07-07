@@ -12,6 +12,8 @@ public class PopupUI : MonoBehaviour
 
     private bool isRead = false;
     private bool isIncomingEmail;
+    public bool popupPressed = false;
+    public SimpleInkDialogue dialogue;
 
     private string bodyText = string.Empty;
 
@@ -44,6 +46,8 @@ public class PopupUI : MonoBehaviour
 
     void OnPopupClicked()
     {
+        dialogue.popupPressed = true;
+
         MarkRead();
         if (OnClickCallback != null)
             OnClickCallback?.Invoke();
