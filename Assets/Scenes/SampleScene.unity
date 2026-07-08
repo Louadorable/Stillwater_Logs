@@ -211,11 +211,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialougeRunner
   emailAssetsUI: {fileID: 1504503628}
   LogoAssetsUI: {fileID: 1424226673}
+  popupPressed: 0
   inkJSON: {fileID: 4900000, guid: 1d5356ac9fb45ae4ca366a8a7e0d58e7, type: 3}
   dialogueText: {fileID: 1206908286}
   senderButton: {fileID: 425232325}
   composeButton: {fileID: 1527912275}
   replyButton: {fileID: 1703363680}
+  sendButtonHider: {fileID: 693037528}
   OP1Button: {fileID: 1745203311}
   OP2Button: {fileID: 791280404}
   OPText1: {fileID: 1201835541}
@@ -1027,6 +1029,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &693037528
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 693037529}
+  - component: {fileID: 693037531}
+  - component: {fileID: 693037530}
+  m_Layer: 5
+  m_Name: Send Button Hider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &693037529
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693037528}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 910887919}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 252.561, y: -141.83}
+  m_SizeDelta: {x: 151.621, y: 31.731}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &693037530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693037528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.9490197, g: 0.9058824, b: 0.86666673, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &693037531
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693037528}
+  m_CullTransparentMesh: 1
 --- !u!1 &791280402
 GameObject:
   m_ObjectHideFlags: 0
@@ -1331,6 +1408,7 @@ RectTransform:
   - {fileID: 1229112588}
   - {fileID: 425232324}
   - {fileID: 1527912274}
+  - {fileID: 693037529}
   - {fileID: 1745203310}
   - {fileID: 791280403}
   m_Father: {fileID: 0}

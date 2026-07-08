@@ -42,6 +42,7 @@ public class SimpleInkDialogue : MonoBehaviour
     public Button composeButton;
     public Button replyButton;
     private bool composeOn = false;
+    public GameObject sendButtonHider;
 
     //Player Reply Option Text
     public Button OP1Button;
@@ -236,6 +237,7 @@ public class SimpleInkDialogue : MonoBehaviour
         {
             Debug.Log("Choice state");
             LogoAssetsUI.SetActive(false);
+            sendButtonHider.SetActive(false);
             typingManager.Disable();
             DisplayChoices();
 
