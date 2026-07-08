@@ -239,13 +239,6 @@ public class SimpleInkDialogue : MonoBehaviour
             typingManager.Disable();
             DisplayChoices();
 
-            if (story.currentChoices.Count > 0)
-            {
-                currentState = EmailState.Choice;
-                DisplayChoices();
-                
-            }
-
             return;
         }
 
@@ -279,7 +272,7 @@ public class SimpleInkDialogue : MonoBehaviour
 
     void HandleTags()
     {
-
+        Debug.Log("In HandleTags");
         string expressionValue = null;
 
         //foreach (string tag in story.currentTags)
@@ -526,6 +519,7 @@ public class SimpleInkDialogue : MonoBehaviour
 
             story.ChooseChoiceIndex(index);
 
+            story.Continue();
             ShowNextLine();
         }
     }

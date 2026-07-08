@@ -128,7 +128,7 @@ All you have to do is forward this email to the Site Director and other relevant
 
 Thanks,
 
-SW
+SW #stop
 
 -> wait_5sec
 
@@ -137,7 +137,7 @@ SW
 # speaker:StillWater_MoitoringStation@gov.org
 # title:Stillwater Entity Has Awoken
 # playerEmail:true
-# next_knot:
+# next_knot:email7_B
 
 Hey, look I get it. Management are twats on a power-trip aren’t they?
 
@@ -149,7 +149,7 @@ Why don't we be comrades in arms and dump this on someone else, hey?
 
 Help me out, Giovanni.
 
-SW
+SW #stop
 
 -> wait_2sec
 
@@ -159,7 +159,7 @@ SW
 # title:Stillwater Entity Has Awoken
 # incomingEmail:true
 # next_knot:_
-fuck off.
+fuck off. #stop
 -> DONE
 
 ==email7_B==
@@ -170,6 +170,6 @@ fuck off.
 
 site director is off duty. just getting automated replies back.
 
-saw the lights were still on in the anomalous research department. I'll pass you onto somebody there.
+saw the lights were still on in the anomalous research department. I'll pass you onto somebody there. #stop
 
 -> DONE
