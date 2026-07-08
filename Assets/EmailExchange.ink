@@ -59,7 +59,7 @@ Thank you.#stop
 
 == email3 ==
 # speaker:MorriganSite_GiovannniHaslo@gov.org
-# title:RE:Stillwater Entity Has Awoken
+# title:RE Stillwater Entity Has Awoken
 # incomingEmail:true
 # next_knot:email4
 # compose_on:true
@@ -75,7 +75,7 @@ Bye.#stop
 
 ==email4==
 # speaker:StillWater_MoitoringStation@gov.org
-# title:RE:Stillwater Entity Has Awoken
+# title:RE Stillwater Entity Has Awoken
 # playerEmail:true
 # next_knot:email5
 
@@ -85,7 +85,7 @@ SW #stop
 
 ==email5==
 # speaker:MorriganSite_GiovannniHaslo@gov.org
-# title:RE:Stillwater Entity Has Awoken
+# title:RE Stillwater Entity Has Awoken
 # incomingEmail:true
 # next_knot:choice1
 # compose_on:true

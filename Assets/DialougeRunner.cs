@@ -428,13 +428,15 @@ public class SimpleInkDialogue : MonoBehaviour
         }
     }
 
-    void ChangeToViewEmailState(string text)
+    void ChangeToViewEmailState(string speaker, string title, string text)
     {
         Debug.Log("ChangeToViewEmailState: " + text);
         if (!string.IsNullOrEmpty(text))
         {
             storedEmailText = text;
             dialogueText.text = text;
+            titleText.text = title;
+            speakerText.text = speaker;
         }
     }
 
@@ -445,7 +447,7 @@ public class SimpleInkDialogue : MonoBehaviour
 
         popup.dialogue = this;
 
-        popup.OnClickCallback = () => ChangeToViewEmailState(text);
+        popup.OnClickCallback = () => ChangeToViewEmailState(speaker, title, text);
         popup.transform.SetParent(EmailPopupContainer, false);
 
         popup.transform.SetAsFirstSibling();
