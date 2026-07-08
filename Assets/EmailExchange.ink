@@ -78,13 +78,6 @@ Bye.#stop
 # title:RE:Stillwater Entity Has Awoken
 # playerEmail:true
 # next_knot:email5
-Evening, 
-
-Who is this? 
-
-Considering the situation, I don't really have the time right now to do paperwork. That's your job, isn't it? 
-
-Thank you.
 
 SW #stop
 

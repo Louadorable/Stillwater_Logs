@@ -495,6 +495,7 @@ public class SimpleInkDialogue : MonoBehaviour
 
     void DisplayChoices()
     {
+        dialogueText.text = "";
         Debug.Log("DisplayChoices count = "+ story.currentChoices.Count);
         // Hide both buttons first
         OP1Button.gameObject.SetActive(false);
