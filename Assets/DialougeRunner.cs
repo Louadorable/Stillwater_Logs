@@ -4,6 +4,7 @@ using TMPro;
 using Ink.Runtime;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 
 public class SimpleInkDialogue : MonoBehaviour
 {
@@ -28,6 +29,8 @@ public class SimpleInkDialogue : MonoBehaviour
     public TextAsset inkJSON;
 
     public TextMeshProUGUI dialogueText;
+
+    public ScrollRect scrollRect;
     
     private string storedEmailText = "";
 
@@ -192,7 +195,9 @@ public class SimpleInkDialogue : MonoBehaviour
         {
             typingManager.Disable();
             storedEmailText = line;
-            dialogueText.text = line; // <-- THIS is your missing viewport update
+
+            replaceDialogueText(line);
+            
             emailAlertSFX.Play();
             bool incoming = isIncomingEmailTag;
             ShowEmail(line);
@@ -436,7 +441,7 @@ public class SimpleInkDialogue : MonoBehaviour
         if (!string.IsNullOrEmpty(text))
         {
             storedEmailText = text;
-            dialogueText.text = text;
+            replaceDialogueText(text);
             titleText.text = title;
             speakerText.text = speaker;
         }
@@ -492,7 +497,7 @@ public class SimpleInkDialogue : MonoBehaviour
 
     void DisplayChoices()
     {
-        dialogueText.text = "";
+        replaceDialogueText("");
         Debug.Log("DisplayChoices count = "+ story.currentChoices.Count);
         // Hide both buttons first
         OP1Button.gameObject.SetActive(false);
@@ -528,5 +533,94 @@ public class SimpleInkDialogue : MonoBehaviour
         }
     }
 
+    private void replaceDialogueTextOLD(string newText)
+    {
+        // as scrollbar is determined by it's parent, also set text on that
+        TextMeshProUGUI templateText = dialogueText.transform.parent.GetComponent<TextMeshProUGUI>();
+        templateText.text = newText;
 
+        dialogueText.text = newText;
+
+        // Update the scrollview and scroll back to top
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
+        scrollRect.verticalNormalizedPosition = 1f; // top
+    }
+
+    private void replaceDialogueTextOLD2(string newText)
+    {
+        // Start the routine to update text and safely rebuild the layout
+        StartCoroutine(UpdateTextAndScrollRoutine(newText));
+    }
+
+    private IEnumerator UpdateTextAndScrollRoutine(string newText)
+    {
+        // 1. Assign the text to both
+        TextMeshProUGUI templateText = dialogueText.transform.parent.GetComponent<TextMeshProUGUI>();
+        if (templateText != null)
+        {
+            templateText.text = newText;
+        }
+        dialogueText.text = newText;
+
+        // 2. Wait for the end of the frame so Unity updates all layout sizes internally
+        yield return new WaitForEndOfFrame();
+
+        // 3. Force the rebuild now that sizes are registered
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
+
+        // 4. Safely snap to the top
+        scrollRect.verticalNormalizedPosition = 1f;
+    }
+
+    private void replaceDialogueTextOLD3(string newText)
+    {
+        TextMeshProUGUI templateText = dialogueText.transform.parent.GetComponent<TextMeshProUGUI>();
+        if (templateText != null)
+        {
+            templateText.text = newText;
+        }
+        dialogueText.text = newText;
+
+        // Force the text components to calculate their new geometry first
+        templateText.ForceMeshUpdate();
+        dialogueText.ForceMeshUpdate();
+
+        // Force UI Canvas update
+        Canvas.ForceUpdateCanvases();
+
+        // Rebuild the Content layout
+        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
+
+        // Rebuild the Scroll Rect layout itself just in case it's stuck
+        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.GetComponent<RectTransform>());
+
+        // Snap to top
+        scrollRect.verticalNormalizedPosition = 1f;
+    }
+
+    private void replaceDialogueText(string newText)
+    {
+        TextMeshProUGUI templateText = dialogueText.transform.parent.GetComponent<TextMeshProUGUI>();
+
+        if (templateText != null)
+        {
+            templateText.text = newText;
+        }
+        dialogueText.text = newText;
+
+        // 1. Force TextMeshPro to instantly calculate its internal text layout
+        templateText.ForceMeshUpdate();
+        dialogueText.ForceMeshUpdate();
+
+        // 2. Force the template text's own layout to update its preferredHeight
+        LayoutRebuilder.ForceRebuildLayoutImmediate(templateText.rectTransform);
+
+        // 3. NOW force the Content group to resize based on the template's new height
+        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
+
+        // 4. Reset scroll to top
+        scrollRect.verticalNormalizedPosition = 1f;
+    }
 } 

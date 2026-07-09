@@ -157,7 +157,8 @@ public class TypingManager : MonoBehaviour
 
     public void Disable()
     {
-        templateText.gameObject.SetActive(false);
+        //templateText.text = "";
+        //templateText.gameObject.SetActive(false);
     }
 
     public void Enable()
