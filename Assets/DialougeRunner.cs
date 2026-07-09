@@ -533,94 +533,43 @@ public class SimpleInkDialogue : MonoBehaviour
         }
     }
 
-    private void replaceDialogueTextOLD(string newText)
-    {
-        // as scrollbar is determined by it's parent, also set text on that
-        TextMeshProUGUI templateText = dialogueText.transform.parent.GetComponent<TextMeshProUGUI>();
-        templateText.text = newText;
-
-        dialogueText.text = newText;
-
-        // Update the scrollview and scroll back to top
-        Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
-        scrollRect.verticalNormalizedPosition = 1f; // top
-    }
-
-    private void replaceDialogueTextOLD2(string newText)
-    {
-        // Start the routine to update text and safely rebuild the layout
-        StartCoroutine(UpdateTextAndScrollRoutine(newText));
-    }
-
-    private IEnumerator UpdateTextAndScrollRoutine(string newText)
-    {
-        // 1. Assign the text to both
-        TextMeshProUGUI templateText = dialogueText.transform.parent.GetComponent<TextMeshProUGUI>();
-        if (templateText != null)
-        {
-            templateText.text = newText;
-        }
-        dialogueText.text = newText;
-
-        // 2. Wait for the end of the frame so Unity updates all layout sizes internally
-        yield return new WaitForEndOfFrame();
-
-        // 3. Force the rebuild now that sizes are registered
-        Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
-
-        // 4. Safely snap to the top
-        scrollRect.verticalNormalizedPosition = 1f;
-    }
-
-    private void replaceDialogueTextOLD3(string newText)
-    {
-        TextMeshProUGUI templateText = dialogueText.transform.parent.GetComponent<TextMeshProUGUI>();
-        if (templateText != null)
-        {
-            templateText.text = newText;
-        }
-        dialogueText.text = newText;
-
-        // Force the text components to calculate their new geometry first
-        templateText.ForceMeshUpdate();
-        dialogueText.ForceMeshUpdate();
-
-        // Force UI Canvas update
-        Canvas.ForceUpdateCanvases();
-
-        // Rebuild the Content layout
-        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
-
-        // Rebuild the Scroll Rect layout itself just in case it's stuck
-        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.GetComponent<RectTransform>());
-
-        // Snap to top
-        scrollRect.verticalNormalizedPosition = 1f;
-    }
 
     private void replaceDialogueText(string newText)
     {
-        TextMeshProUGUI templateText = dialogueText.transform.parent.GetComponent<TextMeshProUGUI>();
+        StartCoroutine(ReplaceDialogueTextRoutine(newText));
+    }
 
-        if (templateText != null)
-        {
-            templateText.text = newText;
-        }
+    private IEnumerator ReplaceDialogueTextRoutine(string newText)
+    {
+        TextMeshProUGUI templateText = dialogueText.transform.parent.GetComponent<TextMeshProUGUI>();
+        if (templateText == null)
+            yield break;
+
+        EnsureTemplateTextFitsContent(templateText);
+
+        templateText.text = newText;
         dialogueText.text = newText;
 
-        // 1. Force TextMeshPro to instantly calculate its internal text layout
-        templateText.ForceMeshUpdate();
-        dialogueText.ForceMeshUpdate();
+        templateText.ForceMeshUpdate(true);
+        dialogueText.ForceMeshUpdate(true);
 
-        // 2. Force the template text's own layout to update its preferredHeight
+        // TMP preferred height is not ready until after the layout pass.
+        yield return null;
+
+        Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(templateText.rectTransform);
-
-        // 3. NOW force the Content group to resize based on the template's new height
         LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
 
-        // 4. Reset scroll to top
         scrollRect.verticalNormalizedPosition = 1f;
+    }
+
+    private static void EnsureTemplateTextFitsContent(TextMeshProUGUI templateText)
+    {
+        ContentSizeFitter fitter = templateText.GetComponent<ContentSizeFitter>();
+        if (fitter == null)
+            fitter = templateText.gameObject.AddComponent<ContentSizeFitter>();
+
+        fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
     }
 } 
