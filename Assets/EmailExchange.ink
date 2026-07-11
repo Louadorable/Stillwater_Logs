@@ -63,6 +63,7 @@ Thank you.#stop
 # incomingEmail:true
 # next_knot:email4
 # compose_on:true
+# repliable:true
 Hey dude, 
 
 Look, can you forward this yourself? I’m not working right now, k?
@@ -89,6 +90,7 @@ SW #stop
 # incomingEmail:true
 # next_knot:choice1
 # compose_on:true
+# repliable:true
 
 my life is at risk! pff! yeah sure..
 

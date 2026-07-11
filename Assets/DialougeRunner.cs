@@ -44,6 +44,8 @@ public class SimpleInkDialogue : MonoBehaviour
     public Button senderButton;
     public Button composeButton;
     public Button replyButton;
+    private bool isRepliable = false;
+    private PopupUI currentViewedPopup;
     private bool composeOn = false;
     public GameObject sendButtonHider;
 
@@ -116,6 +118,13 @@ public class SimpleInkDialogue : MonoBehaviour
     {
         if (composeOn == false) return;
         Debug.Log("Composing!");
+
+        // Once replied, this email stays non-repliable even if revisited via popup.
+        if (currentViewedPopup != null)
+            currentViewedPopup.isRepliable = false;
+        isRepliable = false;
+        replyButton.gameObject.SetActive(false);
+
         story.ChoosePathString(nextKnot);
         ShowNextLine();
     }
@@ -131,7 +140,7 @@ public class SimpleInkDialogue : MonoBehaviour
     void OnSenderButtonClicked()
     {
         Debug.Log("Sending!");
-        SpawnPopup(currentSpeaker, currentTitle, line, isIncomingEmailTag);
+        SpawnPopup(currentSpeaker, currentTitle, line, isIncomingEmailTag, isRepliable);
         ShowNextLine();
     }
 
@@ -283,6 +292,9 @@ public class SimpleInkDialogue : MonoBehaviour
         Debug.Log("In HandleTags");
         string expressionValue = null;
 
+        isRepliable = false;
+        replyButton.gameObject.SetActive(false);
+
         //foreach (string tag in story.currentTags)
         foreach (string tag in tags)
         {
@@ -376,6 +388,13 @@ public class SimpleInkDialogue : MonoBehaviour
 
                 Debug.Log("Title changed to " + currentTitle);
             }
+
+            if (tagKey == "repliable")
+            {
+                Debug.Log("tagRepliable " + tagValue);
+                isRepliable = true;
+                replyButton.gameObject.SetActive(true);
+            }
         }
 
         if (!string.IsNullOrEmpty(expressionValue))
@@ -436,34 +455,37 @@ public class SimpleInkDialogue : MonoBehaviour
         }
     }
 
-    void ChangeToViewEmailState(string speaker, string title, string text)
+    void ChangeToViewEmailState(string speaker, string title, string text, PopupUI popup)
     {
         Debug.Log("ChangeToViewEmailState: " + text);
         if (!string.IsNullOrEmpty(text))
         {
+            currentViewedPopup = popup;
             storedEmailText = text;
             replaceDialogueText(text);
             titleText.text = title;
             speakerText.text = speaker;
+            bool canReply = popup != null && popup.isRepliable;
+            Debug.Log("ChangeToViewEmailState isRepliable: " + canReply);
+            replyButton.gameObject.SetActive(canReply);
         }
     }
 
-    void SpawnPopup(string speaker, string title, string text, bool isIncomingEmailTag)
+    void SpawnPopup(string speaker, string title, string text, bool isIncomingEmailTag, bool isRepliable)
     {
         GameObject go = Instantiate(EmailPopUp);
         PopupUI popup = go.GetComponent<PopupUI>();
 
         popup.dialogue = this;
+        popup.isRepliable = isRepliable;
+        currentViewedPopup = popup;
 
-        popup.OnClickCallback = () => ChangeToViewEmailState(speaker, title, text);
+        popup.OnClickCallback = () => ChangeToViewEmailState(speaker, title, text, popup);
         popup.transform.SetParent(EmailPopupContainer, false);
 
         popup.transform.SetAsFirstSibling();
 
-        PopupUI ui = popup.GetComponent<PopupUI>();
-
-        if (ui != null)
-            ui.SetData(speaker, title, text, isIncomingEmailTag);
+        popup.SetData(speaker, title, text, isIncomingEmailTag);
 
         Debug.Log("SpawnPopup CALLED");
 
@@ -498,7 +520,7 @@ public class SimpleInkDialogue : MonoBehaviour
 
         Debug.Log("EMAIL CAPTURED: [" + storedEmailText + "]");
 
-        SpawnPopup(currentSpeaker, currentTitle, line, isIncomingEmailTag);
+        SpawnPopup(currentSpeaker, currentTitle, line, isIncomingEmailTag, isRepliable);
     }
 
 

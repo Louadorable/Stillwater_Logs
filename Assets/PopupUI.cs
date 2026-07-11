@@ -15,6 +15,9 @@ public class PopupUI : MonoBehaviour
     public bool popupPressed = false;
     public SimpleInkDialogue dialogue;
 
+    /// <summary>True until the player has replied to this email.</summary>
+    public bool isRepliable;
+
     private string bodyText = string.Empty;
 
     public Action OnClickCallback;
