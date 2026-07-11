@@ -76,6 +76,7 @@ public class SimpleInkDialogue : MonoBehaviour
     //PopUps
     public GameObject EmailPopUp;
     public Transform EmailPopupContainer;
+    public ScrollRect popupScrollRect;
 
     public Animator AnimatorTester;
     public Image portraitImage;
@@ -466,11 +467,29 @@ public class SimpleInkDialogue : MonoBehaviour
 
         Debug.Log("SpawnPopup CALLED");
 
-        Canvas.ForceUpdateCanvases();
+        StartCoroutine(RefreshPopupScrollRoutine());
+    }
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(
-            EmailPopupContainer.GetComponent<RectTransform>()
-        );
+    private IEnumerator RefreshPopupScrollRoutine()
+    {
+        yield return null;
+
+        RectTransform containerRect = EmailPopupContainer as RectTransform;
+        if (containerRect == null)
+            containerRect = EmailPopupContainer.GetComponent<RectTransform>();
+
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(containerRect);
+
+        ScrollRect popupScroll = popupScrollRect;
+        if (popupScroll == null)
+            popupScroll = EmailPopupContainer.GetComponentInParent<ScrollRect>();
+
+        if (popupScroll != null && popupScroll.content != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(popupScroll.content);
+            popupScroll.verticalNormalizedPosition = 1f;
+        }
     }
 
     void ShowEmail(string line)
