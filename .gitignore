@@ -64,6 +64,9 @@ ServerData/
 # Visual Studio Code
 .vscode/
 
+# Unity per-user editor state (window layouts, etc.)
+/[Uu]serSettings/
+
 # macOS
 .DS_Store
 
