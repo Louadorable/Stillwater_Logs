@@ -5,6 +5,7 @@ using Ink.Runtime;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 public class SimpleInkDialogue : MonoBehaviour
 {
@@ -79,6 +80,7 @@ public class SimpleInkDialogue : MonoBehaviour
     public GameObject EmailPopUp;
     public Transform EmailPopupContainer;
     public ScrollRect popupScrollRect;
+    private int popupArrivalCounter = 0;
 
     public Animator AnimatorTester;
     public Image portraitImage;
@@ -478,18 +480,66 @@ public class SimpleInkDialogue : MonoBehaviour
 
         popup.dialogue = this;
         popup.isRepliable = isRepliable;
+        popup.subject = title;
+        popup.threadKey = NormalizeSubject(title);
+        popup.arrivalOrder = ++popupArrivalCounter;
         currentViewedPopup = popup;
 
         popup.OnClickCallback = () => ChangeToViewEmailState(speaker, title, text, popup);
         popup.transform.SetParent(EmailPopupContainer, false);
 
-        popup.transform.SetAsFirstSibling();
+        ReorderPopupThreads();
 
         popup.SetData(speaker, title, text, isIncomingEmailTag);
 
         Debug.Log("SpawnPopup CALLED");
 
         StartCoroutine(RefreshPopupScrollRoutine());
+    }
+
+    // Subjects are only ever the base subject or a "RE "-prefixed reply, so no regex is needed.
+    string NormalizeSubject(string subject)
+    {
+        if (string.IsNullOrEmpty(subject)) return string.Empty;
+        string s = subject.Trim();
+        if (s.StartsWith("RE ", System.StringComparison.OrdinalIgnoreCase))
+            s = s.Substring(3);
+        return s.Trim();
+    }
+
+    // Groups popups by thread (normalized subject): the thread with the newest email sits on
+    // top, and within each thread the newest email is on top. The latest email in a thread is
+    // full-width; older ones are indented with the "L" connector.
+    void ReorderPopupThreads()
+    {
+        List<PopupUI> popups = new List<PopupUI>();
+        foreach (Transform child in EmailPopupContainer)
+        {
+            PopupUI p = child.GetComponent<PopupUI>();
+            if (p != null)
+                popups.Add(p);
+        }
+
+        int siblingIndex = 0;
+        var groups = popups
+            .GroupBy(p => p.threadKey)
+            .OrderByDescending(g => g.Max(p => p.arrivalOrder))
+            .ToList();
+
+        for (int groupIndex = 0; groupIndex < groups.Count; groupIndex++)
+        {
+            List<PopupUI> thread = groups[groupIndex].OrderByDescending(p => p.arrivalOrder).ToList();
+            bool isLastThread = groupIndex == groups.Count - 1;
+            for (int i = 0; i < thread.Count; i++)
+            {
+                bool isLatestInThread = i == 0;
+                bool isLastInThread = i == thread.Count - 1;
+                // Restore full between-thread gap after this thread's last email (not after the final thread).
+                bool addInterThreadGap = isLastInThread && !isLastThread;
+                thread[i].SetThreadPosition(isLatestInThread, addInterThreadGap);
+                thread[i].transform.SetSiblingIndex(siblingIndex++);
+            }
+        }
     }
 
     private IEnumerator RefreshPopupScrollRoutine()
