@@ -208,10 +208,9 @@ public class SimpleInkDialogue : MonoBehaviour
             typingManager.Disable();
             storedEmailText = line;
 
-            replaceDialogueText(line);
-            
+            // Spawn the inbox popup only — do not switch the right-hand viewer.
+            // The viewer updates when the player clicks a popup.
             emailAlertSFX.Play();
-            bool incoming = isIncomingEmailTag;
             ShowEmail(line);
             return;
         }
@@ -294,8 +293,22 @@ public class SimpleInkDialogue : MonoBehaviour
         Debug.Log("In HandleTags");
         string expressionValue = null;
 
+        // Incoming emails only spawn a popup; keep the right-hand viewer on whatever
+        // the player is currently reading until they click that popup.
+        bool willShowIncoming = false;
+        foreach (string tag in tags)
+        {
+            string[] split = tag.Split(':');
+            if (split.Length == 2 && split[0].Trim() == "incomingEmail")
+            {
+                willShowIncoming = true;
+                break;
+            }
+        }
+
         isRepliable = false;
-        replyButton.gameObject.SetActive(false);
+        if (!willShowIncoming)
+            replyButton.gameObject.SetActive(false);
 
         //foreach (string tag in story.currentTags)
         foreach (string tag in tags)
@@ -353,17 +366,20 @@ public class SimpleInkDialogue : MonoBehaviour
             {
                 currentSpeaker = tagValue;
 
-                if (speakerText != null)
-                    speakerText.text = tagValue;
-
-                CharacterData character = GetCharacter(currentSpeaker);
-
-                if (character != null)
+                if (!willShowIncoming)
                 {
-                    portraitImage.sprite = character.defaultPortrait;
-                }
+                    if (speakerText != null)
+                        speakerText.text = tagValue;
 
-                ResetExpression();
+                    CharacterData character = GetCharacter(currentSpeaker);
+
+                    if (character != null)
+                    {
+                        portraitImage.sprite = character.defaultPortrait;
+                    }
+
+                    ResetExpression();
+                }
 
                 Debug.Log("Speaker changed to " + currentSpeaker);
             }
@@ -385,7 +401,7 @@ public class SimpleInkDialogue : MonoBehaviour
             {
                 currentTitle = tagValue;
 
-                if (titleText != null)
+                if (!willShowIncoming && titleText != null)
                     titleText.text = tagValue;
 
                 Debug.Log("Title changed to " + currentTitle);
@@ -395,11 +411,12 @@ public class SimpleInkDialogue : MonoBehaviour
             {
                 Debug.Log("tagRepliable " + tagValue);
                 isRepliable = true;
-                replyButton.gameObject.SetActive(true);
+                if (!willShowIncoming)
+                    replyButton.gameObject.SetActive(true);
             }
         }
 
-        if (!string.IsNullOrEmpty(expressionValue))
+        if (!willShowIncoming && !string.IsNullOrEmpty(expressionValue))
         {
             ChangeExpression(expressionValue);
         }
@@ -467,6 +484,11 @@ public class SimpleInkDialogue : MonoBehaviour
             replaceDialogueText(text);
             titleText.text = title;
             speakerText.text = speaker;
+
+            CharacterData character = GetCharacter(speaker);
+            if (character != null)
+                portraitImage.sprite = character.defaultPortrait;
+
             bool canReply = popup != null && popup.isRepliable;
             Debug.Log("ChangeToViewEmailState isRepliable: " + canReply);
             replyButton.gameObject.SetActive(canReply);
@@ -483,7 +505,6 @@ public class SimpleInkDialogue : MonoBehaviour
         popup.subject = title;
         popup.threadKey = NormalizeSubject(title);
         popup.arrivalOrder = ++popupArrivalCounter;
-        currentViewedPopup = popup;
 
         popup.OnClickCallback = () => ChangeToViewEmailState(speaker, title, text, popup);
         popup.transform.SetParent(EmailPopupContainer, false);
