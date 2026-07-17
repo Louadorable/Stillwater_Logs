@@ -10,13 +10,26 @@ public class PopupUI : MonoBehaviour
     public GameObject alertMarker;
     public Button popupButton;
 
+    /// <summary>Reply icon shown to the right of the popup while it is still repliable.</summary>
+    public GameObject replyIcon;
+
     private bool isRead = false;
     private bool isIncomingEmail;
     public bool popupPressed = false;
     public SimpleInkDialogue dialogue;
 
-    /// <summary>True until the player has replied to this email.</summary>
-    public bool isRepliable;
+    [SerializeField] private bool _isRepliable;
+
+    /// <summary>True until the player has replied to this email. Drives the reply icon visibility.</summary>
+    public bool isRepliable
+    {
+        get => _isRepliable;
+        set
+        {
+            _isRepliable = value;
+            UpdateReplyIcon();
+        }
+    }
 
     private string bodyText = string.Empty;
 
@@ -26,6 +39,14 @@ public class PopupUI : MonoBehaviour
     {
         if (popupButton != null)
             popupButton.onClick.AddListener(OnPopupClicked);
+
+        UpdateReplyIcon();
+    }
+
+    void UpdateReplyIcon()
+    {
+        if (replyIcon != null)
+            replyIcon.SetActive(_isRepliable);
     }
 
 
