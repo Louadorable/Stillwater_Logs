@@ -89,8 +89,8 @@ SW #stop
 # title:RE Stillwater Entity Has Awoken
 # incomingEmail:true
 # next_knot:choice1
-# compose_on:true
 # repliable:true
+# compose_on:true
 
 my life is at risk! pff! yeah sure..
 
@@ -116,19 +116,9 @@ you wanna be part of the child-eating 1% too? Then fuck off. #stop
 
 == email6_A ==
 # speaker:StillWater_MoitoringStation@gov.org
-# title:Stillwater Entity Has Awoken
+# title:RE Stillwater Entity Has Awoken
 # playerEmail:true
 # next_knot:email7_A
-
-Giovanni, I understand you are upset. But you cannot behave like this in any professional working environment. 
-
-I know the higher-ups can be stern. But they are like that for good reason. People's lives are at risk. My life is at risk right now.
-
-How would you feel in my position? Trapped in the middle of nowhere while back-up is being held up by some dismissive intern? 
-
-All you have to do is forward this email to the Site Director and other relevant departments. I'll be out of your hair entirely once you’ve done that. 
-
-Thanks,
 
 SW #stop
 
@@ -137,19 +127,9 @@ SW #stop
 
 == email6_B ==
 # speaker:StillWater_MoitoringStation@gov.org
-# title:Stillwater Entity Has Awoken
+# title:RE Stillwater Entity Has Awoken
 # playerEmail:true
 # next_knot:email7_B
-
-Hey, look I get it. Management are twats on a power-trip aren’t they?
-
-I've been stuck out here for a year, and they still haven't told me when I can stand down and return home. I'm constantly covered in mosquito bites and have to cut my own wood for my logfire here. 
-
-Look, I am about as done with all this as you are. I want this out of my hair as much as you do. 
-
-Why don't we be comrades in arms and dump this on someone else, hey? 
-
-Help me out, Giovanni.
 
 SW #stop
 
@@ -158,20 +138,166 @@ SW #stop
 
 ==email7_A==
 # speaker:MorriganSite_GiovannniHaslo@gov.org
-# title:Stillwater Entity Has Awoken
+# title:RE Stillwater Entity Has Awoken
 # incomingEmail:true
-# next_knot:_
+# next_knot:Email8_B
 fuck off. #stop
--> DONE
+
+-> wait_10sec
 
 ==email7_B==
 # speaker:MorriganSite_GiovannniHaslo@gov.org
-# title:Stillwater Entity Has Awoken
+# title:RE Stillwater Entity Has Awoken
 # incomingEmail:true
-# next_knot:_
+# next_knot:email8_A
 
 site director is off duty. just getting automated replies back.
 
 saw the lights were still on in the anomalous research department. I'll pass you onto somebody there. #stop
 
+-> wait_10sec
+
+
+== email8_A==
+# speaker:MorriganSite_AR_MarlyFinch@gov.org
+# title:Need Your Data
+# incomingEmail:true
+# next_knot:Email9
+# compose_on:true
+# repliable:true
+
+Hey Stillwater,
+
+Just got your message. It's up and at it then?
+
+Shame it had to be in the middle of the night like this. You're going to struggle to drag anyone back into the office. 
+
+I'll try reaching out to my department chief. Hopefully, they’ll be willing to pass this up to the Site Director. Tried contacting him myself, but just got an automated reply back talking about how we should forward this to his secretary… who’s currently on paternity leave.
+
+Okay, aside from that. If we’re the only two working on this right now, we probably should make sure that thing’s going near civilisation any time soon. We all know what happened when it last reared its ugly head.
+
+Could you send me some coords? Probably only need to plot three of them for me. 
+
+We’ve got a simulator here that should be able to predict where this entity will move next. 
+
+Typically, it’s somewhere where there is a large amassing of electrical signal, be it tech or a vast quantity of human brain activity. Now, hopefully, this thing will just be bee-lining for our data centres out there, but you never know.
+
+Also, ping the Site Morrigan ‘Mobile Task Force’ SM-MTF. Tell them it’s out.
+
+They’ll be quicker to pick up than the Site Director. Might even get his attention quicker than us.
+
+So:
+
+Send me three coords
+Contact SM-MTF
+
+Good luck out there, Stillwater.
+
+Dr Marly Finch #stop
+
+
+->DONE
+
+
+
+== Email8_B ==
+# speaker:MorriganSite_AR_MarlyFinch@gov.org
+# title:Incident Report
+# incomingEmail:true
+# next_knot:Email8_C 
+# repliable:true
+
+Stillwater, can you respond?
+
+An incident report just came through. Some nutter out there is causing chaos.
+
+You are the closest to all of it. Can you see anything?
+
+Kind Regards
+
+Dr Marly Finch #stop
+
+->DONE
+
+
+== Email8_C ==
+# speaker:StillWater_MoitoringStation@gov.org
+# title:RE Incident Report
+# playerEmail:true
+# next_knot:email7_A
+
+Hi,
+
+I don't believe that person is a person attacking our infrastructure. The Entity here has awoken. 
+
+Would appreciate some help. I have been struggling to contact anyone higher up the chain of command.
+
+Thanks,
+
+SW #stop
+
+->wait_5sec
+
+
+== Email9 ==
+# speaker:StillWater_MoitoringStation@gov.org
+# title:RE Need Your Data
+# playerEmail:true
+# next_knot:MTF_Prompt
+# compose_on:true
+
+Hello, Doctor. 
+
+Here is the coordinates I have tracked. 
+
+(Player Inserts here)
+(Player Inserts here)
+(Player Inserts here)
+
+
+Let me know if you hear back from the Site Director. 
+
+-SW #stop
+
+->wait_2sec
+
+== MTF_Prompt ==
+# speaker:SM-MTF@gov.org
+# title:A REMINDER - SM MTF
+# incomingEmail:true
+# next_knot:Email10
+# repliable:true
+# compose_on:true
+If a situation is escalating out of control, don’t contact your supervisor. 
+
+Contact us.
+
+Site Morrigan’s Mobile Task Force squad is here to serve you. 
+
+Email: SM-MTF@gov.org
+Phone Number (Internal): 111
+Phone Number (External): +44 4852 612 #stop
+
 -> DONE
+
+== Email10 ==
+# speaker:StillWater_MoitoringStation@gov.org
+# title:Requesting EVAC from Stillwater Monitoring Station
+# playerEmail:true
+# next_knot:_
+
+Greetings, 
+
+I am the watcher of the Stillwater Monitoring Station. 
+
+At 21:00, 22nd of April - My equipment detected the Stillwater Entity had awakened.
+
+Currently dealing with it as best I can. Can you send some people down here to provide me EVAC? As well as put this thing back to sleep?
+
+Thanks, 
+
+SW
+
+->wait_5sec
+
+
