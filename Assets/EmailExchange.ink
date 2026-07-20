@@ -26,8 +26,17 @@
 # title:Stillwater Entity Has Awoken
 # playerEmail:true
 # next_knot:email2
-Test, whee woo!'
-Papa #stop
+Good Evening, 
+
+As of: 21:00, 22nd of April, the Stillwater entity has awakened.
+
+I will attempt to weather its storm and provide further updates from my site here Hopefully the narcotics aboard this vessel are still in date, and or have been replaced relatively recently. If not, I hope whichever Ethics Committee reads this down the line gives our External Affairs Department a good kicking.
+
+Right, I best go get some needles prepped. Can't be awake when this thing is near.
+
+Please pass this along to the relevant parties. Thank you, 
+
+SW #stop
 -> wait_5sec
 
 == email2 ==
@@ -80,7 +89,16 @@ Bye.#stop
 # playerEmail:true
 # next_knot:email5
 
-SW #stop
+Evening, 
+
+Who is this? 
+
+Considering the situation, I don’t really have the time right now to do extensive paperwork. That’s your job, isn’t it? 
+
+Thank you.
+
+SW
+ #stop
 
 -> wait_5sec
 
@@ -120,6 +138,16 @@ you wanna be part of the child-eating 1% too? Then fuck off. #stop
 # playerEmail:true
 # next_knot:email7_A
 
+Giovanni, I understand you are upset. But you cannot behave like this in any professional working environment. 
+
+I know the higher-ups can be stern. But they are like that for good reason. People’s lives are at risk. My life is at risk right now.
+
+How would you feel in my position? Trapped in the middle of nowhere while back-up is being held up by some dismissive intern? 
+
+All you have to do is forward this email to the Site Director and other relevant departments. I'll be out of your hair entirely once you've done that. 
+
+Thanks,
+
 SW #stop
 
 -> wait_5sec
@@ -130,6 +158,16 @@ SW #stop
 # title:RE Stillwater Entity Has Awoken
 # playerEmail:true
 # next_knot:email7_B
+
+Hey, look I get it. Management are twats on a power-trip aren't they?
+
+I've been stuck out here for a year, and they still haven't told me when I can stand down and come home. I'm constantly covered in itchy mosquito bites and have to cut my own wood for my logfire here.
+
+Look, I am about as done with all this as you are. 
+
+Why don't we be comrades in arms and dump this on someone else, hey? 
+
+Help me out, Giovanni.
 
 SW #stop
 
