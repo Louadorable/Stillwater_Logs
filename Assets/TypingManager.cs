@@ -21,6 +21,13 @@ public class TypingManager : MonoBehaviour
         var keyboard = Keyboard.current;
         if (keyboard == null) return;
 
+        // Debug: F8 autocompletes the current player email
+        if (keyboard.f8Key.wasPressedThisFrame)
+        {
+            CompleteTyping();
+            return;
+        }
+
         // Get all keys pressed this frame
         foreach (var key in keyboard.allKeys)
         {
@@ -50,12 +57,20 @@ public class TypingManager : MonoBehaviour
 
                 if (typedText == targetText)
                 {
-                    isTyping = false;
-                    Debug.Log("Typing complete!");
+                    CompleteTyping();
                     return;
                 }
             }
         }
+    }
+
+    void CompleteTyping()
+    {
+        typedText = targetText;
+        currentIndex = targetText.Length;
+        playerText.text = typedText;
+        isTyping = false;
+        Debug.Log("Typing complete!");
     }
 
     private char TypedCharacter(Keyboard keyboard, Key keyCode)
