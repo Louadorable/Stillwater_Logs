@@ -511,8 +511,7 @@ Look, if anything, the hammer will come down hardest on our site director for be
 # playerEmail:true
 # next_knot:Email22
 And what if our site chief worms his way out of this? Directs the blame onto me?
-I am not risking my career over this! Hell, my life if they really get pissy!
- #stop
+I am not risking my career over this! Hell, my life if they really get pissy! #stop
 
 ->wait_2sec
 
@@ -522,8 +521,6 @@ I am not risking my career over this! Hell, my life if they really get pissy!
 # title:RE Need Your Data
 # incomingEmail:true
 # next_knot:Email21
-# repliable:false
-# compose_on:false
 
 Look, if you want to bring this up with him yourself. Here's his radio frequency. 166 MHz.
 
