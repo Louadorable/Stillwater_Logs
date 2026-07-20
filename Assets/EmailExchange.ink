@@ -284,7 +284,7 @@ Phone Number (External): +44 4852 612 #stop
 # speaker:StillWater_MoitoringStation@gov.org
 # title:Requesting EVAC from Stillwater Monitoring Station
 # playerEmail:true
-# next_knot:_
+# next_knot:Email11
 
 Greetings, 
 
@@ -296,8 +296,204 @@ Currently dealing with it as best I can. Can you send some people down here to p
 
 Thanks, 
 
-SW
+SW #stop
 
 ->wait_5sec
 
+== Email11 ==
+# speaker:SM-MTF@gov.org
+# title:RE Requesting EVAC from Stillwater Monitoring Station
+# incomingEmail:true
+# next_knot:Email12
+# repliable:true
+# compose_on:true
 
+Good Evening, 
+
+I am afraid to say you’ll need to hunker down for some time. Our main body of soldiers has been sent to assist the Site Hermes staff. A containment breach has occurred over there.
+
+Perhaps send a request to MTF “Sioux”. They are the next closest available force.
+
+Until then you’ll be shortlisted on our deployment list.
+
+Good luck,
+
+SM-MTF #stop
+
+-> DONE
+
+== Email12 ==
+# speaker:StillWater_MoitoringStation@gov.org
+# title:RE Requesting EVAC from Stillwater Monitoring Station
+# playerEmail:true
+# next_knot:Email13
+
+Hello MTF Sioux, 
+
+I am the watcher of Monitoring Station Stillwater.
+
+As of 21:00 tonight the Stillwater Entity awoke from its slumber.
+
+Currently dealing with it as best I can. Can you send some people down here to provide me EVAC?
+
+I have already contacted my local site’s MTF, but they are busy dealing with a containment breach. I have forwarded our email correspondence to you.
+
+Really could do with some help. Quickly please.
+
+SW #stop
+
+->wait_5sec
+
+== Email13 ==
+# speaker:SS-MTF@gov.org
+# title:RE Requesting EVAC from Stillwater Monitoring Station
+# incomingEmail:true
+# next_knot:Email14
+# compose_on:false
+
+Hello Stillwater,
+
+Yes, we can provide assistance to you. However, due to your geographical location and poor weather conditions, we expect it will take around 12 hours to reach you.
+
+Please remain calm and focus on your objectives until then.
+
+SS-MTF #stop
+
+->wait_5sec
+
+== Email14 ==
+# speaker:MorriganSite_AR_MarlyFinch@gov.org
+# title:RE Need Your Data
+# incomingEmail:true
+# next_knot:Email15
+# repliable:true
+# compose_on:true
+
+Evening Stillwater, 
+
+Look, I just ran the simulation. It predicts with a 72% certainty that the entity is going to go after the town of Brandsback within the next few hours. It’s just going on it’s.. ‘Morning strut’ right now. Flex it’s muscles before it runs the marathon. 
+
+Maybe if the MTF makes it to your position, they can shirk it off course. 
+
+Still trying to contact the site director. Having no luck. Think my department chief’s already asleep.
+
+Dr Marly Finch #stop
+
+-> DONE
+
+== Email15 ==
+# speaker:StillWater_MoitoringStation@gov.org
+# title:RE Need Your Data
+# playerEmail:true
+# next_knot:Email16
+
+Hello Doctor, 
+
+Our Task Force is busy right now, and had to call one in from further afield. 
+
+When did your simulation say that thing was going to change course?
+
+SW #stop
+
+->wait_2sec
+
+== Email16 ==
+# speaker:MorriganSite_AR_MarlyFinch@gov.org
+# title:RE Need Your Data
+# incomingEmail:true
+# next_knot:Email17
+# repliable:true
+# compose_on:true
+
+Hello Stillwater, 
+
+It said it was going to change course in around 2 hours. #stop
+
+->DONE
+
+== Email17 ==
+# speaker:StillWater_MoitoringStation@gov.org
+# title:RE Need Your Data
+# playerEmail:true
+# next_knot:Email18
+
+We have a problem then. The new MTF is going to take 12 hours to reach here. #stop
+
+->wait_2sec
+
+== Email18 ==
+# speaker:MorriganSite_AR_MarlyFinch@gov.org
+# title:RE Need Your Data
+# incomingEmail:true
+# next_knot:Email19
+# repliable:true
+# compose_on:true
+
+Shit. 
+
+We’ve got to call in an evacuation of Brandsback then. 
+
+I doubt you're any higher of a rank than me? We’re both around level 2-4 right? 
+
+The Site Director is the only person probably high enough to grant permission to use the civil command codes. #stop
+
+->DONE
+
+
+== Email19 ==
+# speaker:StillWater_MoitoringStation@gov.org
+# title:RE Need Your Data
+# playerEmail:true
+# next_knot:Email20
+Well, I’ve got some here. Stillwater is part of the External Affairs Department. Can’t tell you them obviously. But I cannot use them without clearance. #stop
+
+-> wait_5sec
+
+== Email20 ==
+# speaker:MorriganSite_AR_MarlyFinch@gov.org
+# title:RE Need Your Data
+# incomingEmail:true
+# next_knot:Email21
+# repliable:true
+# compose_on:true
+
+You have got to use them, Stillwater!
+
+Sure, the organisation will be annoyed that you broke protocol. However, I am certain an Ethics Committee will clear you of any wrong doing, after the fact. You were just doing what was right in the moment. 
+
+Look, if anything, the hammer will come down hardest on our site director for being so hard to contact. Not you. #stop
+
+-> DONE
+
+
+== Email21 ==
+# speaker:StillWater_MoitoringStation@gov.org
+# title:RE Need Your Data
+# playerEmail:true
+# next_knot:Email22
+And what if our site chief worms his way out of this? Directs the blame onto me?
+I am not risking my career over this! Hell, my life if they really get pissy!
+ #stop
+
+->wait_2sec
+
+
+== Email22 ==
+# speaker:MorriganSite_AR_MarlyFinch@gov.org
+# title:RE Need Your Data
+# incomingEmail:true
+# next_knot:Email21
+# repliable:false
+# compose_on:false
+
+Look, if you want to bring this up with him yourself. Here’s his radio frequency. 166 MHz.
+
+Found it kicking around in some memos. 
+
+Not been having any luck myself getting his attention. Might be because this building I am in is shielded. 
+
+You out in the open air though? You may have more luck.
+
+And if he doesn’t respond? Just send you codes to the nearest news agency. You know the drill, I assume? #stop
+
+-> DONE
