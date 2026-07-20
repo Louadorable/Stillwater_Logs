@@ -30,7 +30,7 @@ Good Evening,
 
 As of: 21:00, 22nd of April, the Stillwater entity has awakened.
 
-I will attempt to weather its storm and provide further updates from my site here Hopefully the narcotics aboard this vessel are still in date, and or have been replaced relatively recently. If not, I hope whichever Ethics Committee reads this down the line gives our External Affairs Department a good kicking.
+I will attempt to weather its storm and provide further updates from my site here. Hopefully the narcotics aboard this vessel are still in date. If not, I hope whichever Ethics Committee reads this down the line gives our External Affairs Department a good kicking.
 
 Right, I best go get some needles prepped. Can't be awake when this thing is near.
 
