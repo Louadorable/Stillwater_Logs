@@ -604,6 +604,7 @@ public class SimpleInkDialogue : MonoBehaviour
         Debug.Log("EMAIL SENT TO TYPING: [" + storedEmailText + "]");
 
         typingManager.BeginTyping(storedEmailText);
+        StartCoroutine(RefreshEmailScrollLayoutRoutine());
     }
 
 
@@ -662,17 +663,36 @@ public class SimpleInkDialogue : MonoBehaviour
         templateText.text = newText;
         dialogueText.text = newText;
 
-        templateText.ForceMeshUpdate(true);
-        dialogueText.ForceMeshUpdate(true);
+        yield return RefreshEmailScrollLayoutRoutine();
+    }
 
-        // TMP preferred height is not ready until after the layout pass.
+    // Rebuild twice: the first pass may show the vertical scrollbar and shrink the
+    // viewport; the second pass reflows text to that narrower width so it doesn't clip.
+    private IEnumerator RefreshEmailScrollLayoutRoutine()
+    {
+        TextMeshProUGUI templateText = dialogueText.transform.parent.GetComponent<TextMeshProUGUI>();
+        if (templateText == null || scrollRect == null)
+            yield break;
+
+        EnsureTemplateTextFitsContent(templateText);
+
         yield return null;
+        RebuildEmailScrollLayout(templateText);
 
-        Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(templateText.rectTransform);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
+        yield return null;
+        RebuildEmailScrollLayout(templateText);
 
         scrollRect.verticalNormalizedPosition = 1f;
+    }
+
+    private void RebuildEmailScrollLayout(TextMeshProUGUI templateText)
+    {
+        Canvas.ForceUpdateCanvases();
+        templateText.ForceMeshUpdate(true);
+        dialogueText.ForceMeshUpdate(true);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(templateText.rectTransform);
+        if (scrollRect.content != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
     }
 
     private static void EnsureTemplateTextFitsContent(TextMeshProUGUI templateText)
@@ -683,5 +703,13 @@ public class SimpleInkDialogue : MonoBehaviour
 
         fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
         fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        // Stretch to the content/viewport width so text shrinks when the scrollbar appears.
+        RectTransform rt = templateText.rectTransform;
+        rt.anchorMin = new Vector2(0f, 1f);
+        rt.anchorMax = new Vector2(1f, 1f);
+        rt.pivot = new Vector2(0.5f, 1f);
+        rt.anchoredPosition = Vector2.zero;
+        rt.sizeDelta = new Vector2(0f, rt.sizeDelta.y);
     }
 } 
