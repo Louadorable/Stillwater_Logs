@@ -61,7 +61,7 @@ A reminder to:
      
 3) Even if Civil Command Codes are known to External Affairs Department Operatives. ASK for permission to use them from SITE COMMAND. 
 
-Thank you.#stop
+Thank you. #stop
 
 -> wait_5sec
 
@@ -73,15 +73,16 @@ Thank you.#stop
 # next_knot:email4
 # compose_on:true
 # repliable:true
+
 Hey dude, 
 
-Look, can you forward this yourself? I’m not working right now, k?
+Look, can you forward this yourself? I'm not working right now, k?
 
 boss pissed me off. 
 
 Bye.#stop
 
--> DONE
+->DONE
 
 ==email4==
 # speaker:StillWater_MoitoringStation@gov.org
@@ -93,14 +94,13 @@ Evening,
 
 Who is this? 
 
-Considering the situation, I don’t really have the time right now to do extensive paperwork. That’s your job, isn’t it? 
+Considering the situation, I don't really have the time right now to do extensive paperwork. That's your job, isn't it? 
 
 Thank you.
 
-SW
- #stop
+SW #stop
 
--> wait_5sec
+->wait_5sec
 
 ==email5==
 # speaker:MorriganSite_GiovannniHaslo@gov.org
@@ -112,7 +112,7 @@ SW
 
 my life is at risk! pff! yeah sure..
 
-look, that's what they said to me when I decided to tell the dudes over on the WAR ThHUNDER forumns that we've got weapons in here from some higher-dimensional reality that’s way better than anything their countries could ever build.
+look, that's what they said to me when I decided to tell the dudes over on the WAR ThHUNDER forumns that we've got weapons in here from some higher-dimensional reality that's way better than anything their countries could ever build.
 
 boss got really PISSED. Said I was a nepo-baby intern - WHICH I AM NOT. 
 
@@ -140,7 +140,7 @@ you wanna be part of the child-eating 1% too? Then fuck off. #stop
 
 Giovanni, I understand you are upset. But you cannot behave like this in any professional working environment. 
 
-I know the higher-ups can be stern. But they are like that for good reason. People’s lives are at risk. My life is at risk right now.
+I know the higher-ups can be stern. But they are like that for good reason. People's lives are at risk. My life is at risk right now.
 
 How would you feel in my position? Trapped in the middle of nowhere while back-up is being held up by some dismissive intern? 
 
@@ -181,7 +181,7 @@ SW #stop
 # next_knot:Email8_B
 fuck off. #stop
 
--> wait_10sec
+-> wait_5sec
 
 ==email7_B==
 # speaker:MorriganSite_GiovannniHaslo@gov.org
@@ -210,19 +210,19 @@ Just got your message. It's up and at it then?
 
 Shame it had to be in the middle of the night like this. You're going to struggle to drag anyone back into the office. 
 
-I'll try reaching out to my department chief. Hopefully, they’ll be willing to pass this up to the Site Director. Tried contacting him myself, but just got an automated reply back talking about how we should forward this to his secretary… who’s currently on paternity leave.
+I'll try reaching out to my department chief. Hopefully, they'll be willing to pass this up to the Site Director. Tried contacting him myself, but just got an automated reply back talking about how we should forward this to his secretary… who's currently on paternity leave.
 
-Okay, aside from that. If we’re the only two working on this right now, we probably should make sure that thing’s going near civilisation any time soon. We all know what happened when it last reared its ugly head.
+Okay, aside from that. If we're the only two working on this right now, we probably should make sure that thing's going near civilisation any time soon. We all know what happened when it last reared its ugly head.
 
 Could you send me some coords? Probably only need to plot three of them for me. 
 
-We’ve got a simulator here that should be able to predict where this entity will move next. 
+We've got a simulator here that should be able to predict where this entity will move next. 
 
-Typically, it’s somewhere where there is a large amassing of electrical signal, be it tech or a vast quantity of human brain activity. Now, hopefully, this thing will just be bee-lining for our data centres out there, but you never know.
+Typically, it's somewhere where there is a large amassing of electrical signal, be it tech or a vast quantity of human brain activity. Now, hopefully, this thing will just be bee-lining for our data centres out there, but you never know.
 
-Also, ping the Site Morrigan ‘Mobile Task Force’ SM-MTF. Tell them it’s out.
+Also, ping the Site Morrigan ‘Mobile Task Force' SM-MTF. Tell them it's out.
 
-They’ll be quicker to pick up than the Site Director. Might even get his attention quicker than us.
+They'll be quicker to pick up than the Site Director. Might even get his attention quicker than us.
 
 So:
 
@@ -244,6 +244,7 @@ Dr Marly Finch #stop
 # incomingEmail:true
 # next_knot:Email8_C 
 # repliable:true
+# compose_on:true
 
 Stillwater, can you respond?
 
@@ -306,11 +307,11 @@ Let me know if you hear back from the Site Director.
 # next_knot:Email10
 # repliable:true
 # compose_on:true
-If a situation is escalating out of control, don’t contact your supervisor. 
+If a situation is escalating out of control, don't contact your supervisor. 
 
 Contact us.
 
-Site Morrigan’s Mobile Task Force squad is here to serve you. 
+Site Morrigan's Mobile Task Force squad is here to serve you. 
 
 Email: SM-MTF@gov.org
 Phone Number (Internal): 111
@@ -348,11 +349,11 @@ SW #stop
 
 Good Evening, 
 
-I am afraid to say you’ll need to hunker down for some time. Our main body of soldiers has been sent to assist the Site Hermes staff. A containment breach has occurred over there.
+I am afraid to say you'll need to hunker down for some time. Our main body of soldiers has been sent to assist the Site Hermes staff. A containment breach has occurred over there.
 
 Perhaps send a request to MTF “Sioux”. They are the next closest available force.
 
-Until then you’ll be shortlisted on our deployment list.
+Until then you'll be shortlisted on our deployment list.
 
 Good luck,
 
@@ -374,7 +375,7 @@ As of 21:00 tonight the Stillwater Entity awoke from its slumber.
 
 Currently dealing with it as best I can. Can you send some people down here to provide me EVAC?
 
-I have already contacted my local site’s MTF, but they are busy dealing with a containment breach. I have forwarded our email correspondence to you.
+I have already contacted my local site's MTF, but they are busy dealing with a containment breach. I have forwarded our email correspondence to you.
 
 Really could do with some help. Quickly please.
 
@@ -409,11 +410,11 @@ SS-MTF #stop
 
 Evening Stillwater, 
 
-Look, I just ran the simulation. It predicts with a 72% certainty that the entity is going to go after the town of Brandsback within the next few hours. It’s just going on it’s.. ‘Morning strut’ right now. Flex it’s muscles before it runs the marathon. 
+Look, I just ran the simulation. It predicts with a 72% certainty that the entity is going to go after the town of Brandsback within the next few hours. It's just going on it's.. ‘Morning strut' right now. Flex it's muscles before it runs the marathon. 
 
 Maybe if the MTF makes it to your position, they can shirk it off course. 
 
-Still trying to contact the site director. Having no luck. Think my department chief’s already asleep.
+Still trying to contact the site director. Having no luck. Think my department chief's already asleep.
 
 Dr Marly Finch #stop
 
@@ -469,9 +470,9 @@ We have a problem then. The new MTF is going to take 12 hours to reach here. #st
 
 Shit. 
 
-We’ve got to call in an evacuation of Brandsback then. 
+We've got to call in an evacuation of Brandsback then. 
 
-I doubt you're any higher of a rank than me? We’re both around level 2-4 right? 
+I doubt you're any higher of a rank than me? We're both around level 2-4 right? 
 
 The Site Director is the only person probably high enough to grant permission to use the civil command codes. #stop
 
@@ -483,7 +484,7 @@ The Site Director is the only person probably high enough to grant permission to
 # title:RE Need Your Data
 # playerEmail:true
 # next_knot:Email20
-Well, I’ve got some here. Stillwater is part of the External Affairs Department. Can’t tell you them obviously. But I cannot use them without clearance. #stop
+Well, I've got some here. Stillwater is part of the External Affairs Department. Can't tell you them obviously. But I cannot use them without clearance. #stop
 
 -> wait_5sec
 
@@ -524,7 +525,7 @@ I am not risking my career over this! Hell, my life if they really get pissy!
 # repliable:false
 # compose_on:false
 
-Look, if you want to bring this up with him yourself. Here’s his radio frequency. 166 MHz.
+Look, if you want to bring this up with him yourself. Here's his radio frequency. 166 MHz.
 
 Found it kicking around in some memos. 
 
@@ -532,6 +533,6 @@ Not been having any luck myself getting his attention. Might be because this bui
 
 You out in the open air though? You may have more luck.
 
-And if he doesn’t respond? Just send you codes to the nearest news agency. You know the drill, I assume? #stop
+And if he doesn't respond? Just send you codes to the nearest news agency. You know the drill, I assume? #stop
 
 -> DONE
