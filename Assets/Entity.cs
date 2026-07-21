@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Tracks an entity in story coordinates, periodically moves it toward (0,0),
@@ -10,6 +11,8 @@ public class Entity : MonoBehaviour
     [Header("References")]
     public Camera radarCamera;
     public GameObject enemyDot;
+    [Tooltip("Shown for a few seconds when crossing the 75 / 50 / 25 warning marks.")]
+    public GameObject warningPopupContainer;
 
     [Header("Audio")]
     public AudioSource inRadarRangeAudio;
@@ -34,23 +37,48 @@ public class Entity : MonoBehaviour
     [Tooltip("Game over only when BOTH story X and Y are within [-limit, +limit].")]
     public float gotchaAxisLimit = 5f;
 
+    [Header("Warning Popup")]
+    public float warningPopupDuration = 3f;
+
     static readonly float[] WarningMarks = { 75f, 50f, 25f };
+    const string WarningPopupName = "Warning pop up container";
 
     Vector2 storyPosition;
     bool stopped;
     float previousThreatDistance = float.MaxValue;
     Animator enemyDotAnimator;
+    Coroutine warningPopupRoutine;
 
     void Start()
     {
         if (enemyDot != null)
             enemyDotAnimator = enemyDot.GetComponent<Animator>();
 
+        if (warningPopupContainer == null)
+            warningPopupContainer = FindWarningPopupContainer();
+        if (warningPopupContainer != null)
+            warningPopupContainer.SetActive(false);
+        else
+            Debug.LogWarning(
+                "Entity: Warning popup not found at Start. Assign Warning Popup Container on the Entity component.");
+
         storyPosition = PickStartOutsideRadar();
         previousThreatDistance = ThreatDistance();
         RefreshDotVisibility();
         UpdateAudio();
         StartCoroutine(MoveLoop());
+    }
+
+    void Update()
+    {
+        if (stopped) return;
+
+        var keyboard = Keyboard.current;
+        if (keyboard == null) return;
+
+        // Debug: F1 forces an immediate step closer to (0,0).
+        if (keyboard.f1Key.wasPressedThisFrame)
+            ForceMoveTowardOrigin();
     }
 
     IEnumerator MoveLoop()
@@ -62,20 +90,34 @@ public class Entity : MonoBehaviour
             if (stopped) yield break;
 
             StepAlongRandomPath();
-            ClampToStoryBounds();
-            RefreshDotVisibility();
-            UpdateAudio();
-
-            if (HasReachedOrigin())
-            {
-                stopped = true;
-                StopAllEntityAudio();
-                Debug.Log(
-                    $"Gotcha! Game over! story=({storyPosition.x:F2}, {storyPosition.y:F2}) " +
-                    $"requires both axes in [{-gotchaAxisLimit}, {gotchaAxisLimit}]");
-                yield break;
-            }
+            FinishMove();
         }
+    }
+
+    void ForceMoveTowardOrigin()
+    {
+        // Always step inward (no outward drift) so F1 reliably closes the gap.
+        float inward = ThreatDistance() <= 50f ? maxInwardStepClose : maxInwardStep;
+        storyPosition.x += InwardAxisStep(storyPosition.x, inward);
+        storyPosition.y += InwardAxisStep(storyPosition.y, inward);
+        Debug.Log($"Entity F1 debug move to story position {storyPosition}");
+        FinishMove();
+    }
+
+    void FinishMove()
+    {
+        ClampToStoryBounds();
+        RefreshDotVisibility();
+        UpdateAudio();
+
+        if (!HasReachedOrigin()) return;
+
+        stopped = true;
+        StopAllEntityAudio();
+        HideWarningPopup();
+        Debug.Log(
+            $"Gotcha! Game over! story=({storyPosition.x:F2}, {storyPosition.y:F2}) " +
+            $"requires both axes in [{-gotchaAxisLimit}, {gotchaAxisLimit}]");
     }
 
     void StepAlongRandomPath()
@@ -96,6 +138,16 @@ public class Entity : MonoBehaviour
         float towardOrigin = -Mathf.Sign(coord);
         float step = Random.Range(-maxOutwardStep, maxInward);
         return towardOrigin * step;
+    }
+
+    float InwardAxisStep(float coord, float maxInward)
+    {
+        if (Mathf.Abs(coord) <= Mathf.Epsilon)
+            return 0f;
+
+        float towardOrigin = -Mathf.Sign(coord);
+        float maxStep = Mathf.Min(maxInward, Mathf.Abs(coord));
+        return towardOrigin * Random.Range(0f, maxStep);
     }
 
     void ClampToStoryBounds()
@@ -161,36 +213,130 @@ public class Entity : MonoBehaviour
 
     void UpdateWarningAlarm(float previousThreat, float currentThreat)
     {
-        if (warningAlarmAudio == null) return;
+        bool crossedWarningMark = false;
+        foreach (float mark in WarningMarks)
+        {
+            if (previousThreat > mark && currentThreat <= mark)
+            {
+                crossedWarningMark = true;
+                break;
+            }
+        }
 
         bool insideInnerRing = currentThreat <= 25f;
 
         if (insideInnerRing)
         {
             // At 25 and within: keep the alarm looping.
-            warningAlarmAudio.loop = true;
-            if (!warningAlarmAudio.isPlaying)
-                warningAlarmAudio.Play();
+            // Popup shares this exact play path.
+            if (crossedWarningMark)
+                PlayWarningAlert(loop: true);
+            else if (warningAlarmAudio != null && !warningAlarmAudio.isPlaying)
+                PlayWarningAlert(loop: true);
             return;
         }
 
         // Left the inner ring — stop continuous alarm.
-        if (warningAlarmAudio.loop)
+        if (warningAlarmAudio != null && warningAlarmAudio.loop)
         {
             warningAlarmAudio.loop = false;
             warningAlarmAudio.Stop();
         }
 
-        // One-shot when crossing 75, 50, or 25 inward.
-        foreach (float mark in WarningMarks)
+        // One-shot alert + popup when crossing 75 or 50 inward.
+        if (crossedWarningMark)
+            PlayWarningAlert(loop: false);
+    }
+
+    // Same trigger path for sound and popup — whenever the warning alert plays.
+    void PlayWarningAlert(bool loop)
+    {
+        if (warningAlarmAudio != null)
         {
-            if (previousThreat > mark && currentThreat <= mark)
+            warningAlarmAudio.loop = loop;
+            warningAlarmAudio.Play();
+        }
+
+        ShowWarningPopup();
+    }
+
+    void ShowWarningPopup()
+    {
+        if (warningPopupContainer == null)
+            warningPopupContainer = FindWarningPopupContainer();
+
+        if (warningPopupContainer == null)
+        {
+            Debug.LogWarning(
+                "Entity: Warning popup not assigned. Set Warning Popup Container on Entity, " +
+                $"or name the object \"{WarningPopupName}\".");
+            return;
+        }
+
+        if (warningPopupRoutine != null)
+            StopCoroutine(warningPopupRoutine);
+
+        warningPopupRoutine = StartCoroutine(WarningPopupRoutine());
+    }
+
+    IEnumerator WarningPopupRoutine()
+    {
+        warningPopupContainer.SetActive(true);
+        yield return new WaitForSeconds(warningPopupDuration);
+        if (warningPopupContainer != null)
+            warningPopupContainer.SetActive(false);
+        warningPopupRoutine = null;
+    }
+
+    void HideWarningPopup()
+    {
+        if (warningPopupRoutine != null)
+        {
+            StopCoroutine(warningPopupRoutine);
+            warningPopupRoutine = null;
+        }
+
+        if (warningPopupContainer != null)
+            warningPopupContainer.SetActive(false);
+    }
+
+    GameObject FindWarningPopupContainer()
+    {
+        GameObject exact = FindNamedSceneObject(WarningPopupName);
+        if (exact != null)
+            return exact;
+
+        // Fallback: allow minor naming differences.
+        GameObject[] all = Object.FindObjectsByType<GameObject>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        foreach (GameObject go in all)
+        {
+            string n = go.name;
+            if (n.IndexOf("warning", System.StringComparison.OrdinalIgnoreCase) >= 0
+                && n.IndexOf("pop", System.StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                warningAlarmAudio.loop = false;
-                warningAlarmAudio.Play();
-                break;
+                return go;
             }
         }
+
+        return null;
+    }
+
+    static GameObject FindNamedSceneObject(string objectName)
+    {
+        GameObject[] all = Object.FindObjectsByType<GameObject>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        foreach (GameObject go in all)
+        {
+            if (go.name == objectName)
+                return go;
+        }
+
+        return null;
     }
 
     void StopAllEntityAudio()
