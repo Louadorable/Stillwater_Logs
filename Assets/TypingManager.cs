@@ -2,17 +2,31 @@ using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class TypingManager : MonoBehaviour
 {
     public TextMeshProUGUI templateText;
     public TextMeshProUGUI playerText;
+    public Transform cursor;
+
+    [SerializeField] private float cursorScrollPadding = 16f;
+    [SerializeField] private float cursorYOffset = 1f;
 
     private string targetText = "";
     private string typedText = "";
     private int currentIndex = 0;
 
     private bool isTyping = false;
+    private ScrollRect emailScrollRect;
+
+    void Awake()
+    {
+        if (templateText != null)
+            emailScrollRect = templateText.GetComponentInParent<ScrollRect>();
+
+        SetCursorVisible(false);
+    }
 
     void Update()
     {
@@ -64,12 +78,19 @@ public class TypingManager : MonoBehaviour
         }
     }
 
+    void LateUpdate()
+    {
+        if (isTyping)
+            UpdateCursorPosition();
+    }
+
     void CompleteTyping()
     {
         typedText = targetText;
         currentIndex = targetText.Length;
         playerText.text = typedText;
         isTyping = false;
+        SetCursorVisible(false);
         Debug.Log("Typing complete!");
     }
 
@@ -163,6 +184,7 @@ public class TypingManager : MonoBehaviour
 
         templateText.gameObject.SetActive(true);
         templateText.enabled = true;
+        SetCursorVisible(true);
     }
 
     public bool IsTypingDone()
@@ -174,6 +196,8 @@ public class TypingManager : MonoBehaviour
     {
         //templateText.text = "";
         //templateText.gameObject.SetActive(false);
+        isTyping = false;
+        SetCursorVisible(false);
     }
 
     public void Enable()
@@ -181,5 +205,79 @@ public class TypingManager : MonoBehaviour
         // prevent any existing game object hijacking when return pressed during typing
         EventSystem.current.SetSelectedGameObject(null);
         templateText.gameObject.SetActive(true);
+    }
+
+    private void SetCursorVisible(bool visible)
+    {
+        if (cursor == null) return;
+        cursor.gameObject.SetActive(visible);
+    }
+
+    private void UpdateCursorPosition()
+    {
+        if (cursor == null || templateText == null)
+            return;
+
+        templateText.ForceMeshUpdate(true);
+        TMP_TextInfo textInfo = templateText.textInfo;
+        if (textInfo.characterCount == 0)
+            return;
+
+        // Use line ascender/descender for Y so the caret stays level across letters.
+        TMP_CharacterInfo anchorChar;
+        float x;
+        if (currentIndex >= textInfo.characterCount)
+        {
+            anchorChar = textInfo.characterInfo[textInfo.characterCount - 1];
+            x = anchorChar.topRight.x;
+        }
+        else
+        {
+            anchorChar = textInfo.characterInfo[currentIndex];
+            x = anchorChar.topLeft.x;
+        }
+
+        TMP_LineInfo line = textInfo.lineInfo[anchorChar.lineNumber];
+        float y = (line.ascender + line.descender) * 0.5f;
+        Vector3 localPoint = new Vector3(x, y, 0f);
+
+        Vector3 worldPoint = templateText.rectTransform.TransformPoint(localPoint);
+        Vector3 localInParent = cursor.parent.InverseTransformPoint(worldPoint);
+        localInParent.y += cursorYOffset;
+        localInParent.z = cursor.localPosition.z;
+        cursor.localPosition = localInParent;
+
+        KeepCursorInView(cursor.position);
+    }
+
+    private void KeepCursorInView(Vector3 cursorWorldPoint)
+    {
+        if (emailScrollRect == null)
+            emailScrollRect = templateText.GetComponentInParent<ScrollRect>();
+        if (emailScrollRect == null || emailScrollRect.viewport == null || emailScrollRect.content == null)
+            return;
+
+        RectTransform viewport = emailScrollRect.viewport;
+        RectTransform content = emailScrollRect.content;
+
+        float contentHeight = content.rect.height;
+        float viewportHeight = viewport.rect.height;
+        if (contentHeight <= viewportHeight)
+            return;
+
+        Vector3 caretInViewport = viewport.InverseTransformPoint(cursorWorldPoint);
+        float overflow = contentHeight - viewportHeight;
+        float normalized = emailScrollRect.verticalNormalizedPosition;
+
+        if (caretInViewport.y < viewport.rect.yMin + cursorScrollPadding)
+        {
+            float delta = (viewport.rect.yMin + cursorScrollPadding) - caretInViewport.y;
+            emailScrollRect.verticalNormalizedPosition = Mathf.Clamp01(normalized - delta / overflow);
+        }
+        else if (caretInViewport.y > viewport.rect.yMax - cursorScrollPadding)
+        {
+            float delta = caretInViewport.y - (viewport.rect.yMax - cursorScrollPadding);
+            emailScrollRect.verticalNormalizedPosition = Mathf.Clamp01(normalized + delta / overflow);
+        }
     }
 }
