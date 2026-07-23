@@ -13,6 +13,8 @@ public class Entity : MonoBehaviour
     public GameObject enemyDot;
     [Tooltip("Shown for a few seconds when crossing the 75 / 50 / 25 warning marks.")]
     public GameObject warningPopupContainer;
+    [Tooltip("Switches to DeathCam / game over UI when the entity reaches the player.")]
+    public CameraSwitchDebug cameraSwitch;
 
     [Header("Audio")]
     public AudioSource inRadarRangeAudio;
@@ -118,6 +120,13 @@ public class Entity : MonoBehaviour
         Debug.Log(
             $"Gotcha! Game over! story=({storyPosition.x:F2}, {storyPosition.y:F2}) " +
             $"requires both axes in [{-gotchaAxisLimit}, {gotchaAxisLimit}]");
+
+        if (cameraSwitch == null)
+            cameraSwitch = FindFirstObjectByType<CameraSwitchDebug>();
+        if (cameraSwitch != null)
+            cameraSwitch.ShowDeath();
+        else
+            Debug.LogWarning("Entity: CameraSwitchDebug not found; cannot show death screen.");
     }
 
     void StepAlongRandomPath()
