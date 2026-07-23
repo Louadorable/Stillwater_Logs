@@ -29,6 +29,6 @@ public class MenuCameraSwitchButton : MonoBehaviour
         if (disableCamera != null)
             disableCamera.SetActive(false);
 
-        Variables.Scene("WhatMainMenuAreWeOn?") = menuSectionValue;
+        Variables.ActiveScene.Set("WhatMainMenuAreWeOn?", menuSectionValue);
     }
 }

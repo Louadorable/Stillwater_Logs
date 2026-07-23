@@ -6,6 +6,48 @@ using UnityEngine.UI;
 
 public class TypingManager : MonoBehaviour
 {
+    // Prefs key versioned so older saved "Off" values don't stick as the apparent default.
+    const string CaseSensitivePrefsKey = "TypingCaseSensitiveV2";
+
+    static bool caseSensitive = true;
+    static bool loaded;
+
+    /// <summary>
+    /// When true, typed letters must match the template's exact case.
+    /// Persists across scenes via PlayerPrefs. Defaults to on.
+    /// </summary>
+    public static bool CaseSensitive
+    {
+        get
+        {
+            EnsureLoaded();
+            return caseSensitive;
+        }
+        set
+        {
+            EnsureLoaded();
+            caseSensitive = value;
+            PlayerPrefs.SetInt(CaseSensitivePrefsKey, value ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStaticState()
+    {
+        caseSensitive = true;
+        loaded = false;
+    }
+
+    static void EnsureLoaded()
+    {
+        if (loaded)
+            return;
+
+        loaded = true;
+        caseSensitive = PlayerPrefs.GetInt(CaseSensitivePrefsKey, 1) == 1;
+    }
+
     public TextMeshProUGUI templateText;
     public TextMeshProUGUI playerText;
     public Transform cursor;
@@ -60,9 +102,12 @@ public class TypingManager : MonoBehaviour
                 Debug.Log("target char " + targetText[currentIndex]);
                 Debug.Log("currentIndex "+ currentIndex);
 
-                if (c == targetText[currentIndex])
+                char expected = targetText[currentIndex];
+                if (CharactersMatch(c, expected))
                 {
-                    typedText += c;
+                    // Use the template character so typed text always matches the target,
+                    // even when case sensitivity is off.
+                    typedText += expected;
                     currentIndex++;
 
                     playerText.text = typedText;
@@ -92,6 +137,14 @@ public class TypingManager : MonoBehaviour
         isTyping = false;
         SetCursorVisible(false);
         Debug.Log("Typing complete!");
+    }
+
+    private static bool CharactersMatch(char typed, char expected)
+    {
+        if (CaseSensitive)
+            return typed == expected;
+
+        return char.ToLowerInvariant(typed) == char.ToLowerInvariant(expected);
     }
 
     private char TypedCharacter(Keyboard keyboard, Key keyCode)
