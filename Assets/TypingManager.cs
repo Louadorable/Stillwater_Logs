@@ -61,11 +61,16 @@ public class TypingManager : MonoBehaviour
 
     private bool isTyping = false;
     private ScrollRect emailScrollRect;
+    private Camera mainCamera;
 
     void Awake()
     {
         if (templateText != null)
             emailScrollRect = templateText.GetComponentInParent<ScrollRect>();
+
+        var cameraSwitch = FindFirstObjectByType<CameraSwitchDebug>();
+        if (cameraSwitch != null)
+            mainCamera = cameraSwitch.mainCamera;
 
         SetCursorVisible(false);
     }
@@ -125,7 +130,9 @@ public class TypingManager : MonoBehaviour
 
     void LateUpdate()
     {
-        if (isTyping)
+        bool showCursor = isTyping && IsMainCameraActive();
+        SetCursorVisible(showCursor);
+        if (showCursor)
             UpdateCursorPosition();
     }
 
@@ -237,7 +244,7 @@ public class TypingManager : MonoBehaviour
 
         templateText.gameObject.SetActive(true);
         templateText.enabled = true;
-        SetCursorVisible(true);
+        SetCursorVisible(IsMainCameraActive());
     }
 
     public bool IsTypingDone()
@@ -258,6 +265,11 @@ public class TypingManager : MonoBehaviour
         // prevent any existing game object hijacking when return pressed during typing
         EventSystem.current.SetSelectedGameObject(null);
         templateText.gameObject.SetActive(true);
+    }
+
+    private bool IsMainCameraActive()
+    {
+        return mainCamera != null && mainCamera.gameObject.activeInHierarchy;
     }
 
     private void SetCursorVisible(bool visible)
