@@ -2,7 +2,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// F7 switches to RadarCam, F8 switches to MedicalCam, F6 returns to Main Camera.
+/// F7 toggles RadarCam (press again to return to Main).
+/// F8 toggles MedicalCam (press again to return to Main).
+/// F6 always returns to Main Camera.
 /// ShowDeath() switches to the game-over DeathCam / death UI.
 /// </summary>
 public class CameraSwitchDebug : MonoBehaviour
@@ -32,10 +34,20 @@ public class CameraSwitchDebug : MonoBehaviour
         if (keyboard == null) return;
 
         if (keyboard.f7Key.wasPressedThisFrame)
-            ShowRadar();
+        {
+            if (showingRadar)
+                ShowMain();
+            else
+                ShowRadar();
+        }
 
         if (keyboard.f8Key.wasPressedThisFrame)
-            ShowMedical();
+        {
+            if (showingMedical)
+                ShowMain();
+            else
+                ShowMedical();
+        }
 
         if (keyboard.f6Key.wasPressedThisFrame)
             ShowMain();
