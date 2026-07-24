@@ -411,4 +411,30 @@ public class Entity : MonoBehaviour
             Random.Range(radarBound + 1f, storyBound) * (Random.value < 0.5f ? -1f : 1f),
             Random.Range(-storyBound, storyBound));
     }
+
+    /// <summary>
+    /// Resets the enemy to a random story position outside the radar bound.
+    /// </summary>
+    public void ResetOutsideRadar()
+    {
+        if (stopped) return;
+
+        storyPosition = PickStartOutsideRadar();
+        previousThreatDistance = ThreatDistance();
+        RefreshDotVisibility();
+        UpdateAudio();
+        Debug.Log($"Entity reset outside radar to story position {storyPosition}");
+    }
+
+    /// <summary>
+    /// Stops AI / audio when a game-over path is triggered (entity catch or overdose).
+    /// </summary>
+    public void StopForGameOver()
+    {
+        if (stopped) return;
+
+        stopped = true;
+        StopAllEntityAudio();
+        HideWarningPopup();
+    }
 }

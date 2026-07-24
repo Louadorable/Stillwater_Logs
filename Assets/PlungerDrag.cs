@@ -1,12 +1,21 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
-
+/// <summary>
+/// Click-and-drag the plunger vertically while MedicalCam is active.
+/// The plunger bottom cannot go below the syringe bottom, and can rise
+/// as far as the High notch. Fluid fills from the syringe bottom up to
+/// the plunger bottom. At the Mid (level 2) notch, the Inject button appears.
+/// </summary>
 [RequireComponent(typeof(Collider2D))]
 public class PlungerDrag : MonoBehaviour
 {
     [Tooltip("Syringe transform used as the lower height reference.")]
     public Transform syringe;
+
+    [Tooltip("Mid notch mark (level 2). Inject button shows when plunger bottom reaches this.")]
+    public Transform midNotch;
 
     [Tooltip("High notch mark. The plunger bottom can rise up to this height.")]
     public Transform highNotch;
@@ -20,11 +29,26 @@ public class PlungerDrag : MonoBehaviour
     [Tooltip("Fluid in the pot. Lowers as syringe fluid rises, and rises as syringe fluid lowers.")]
     public Transform potFluid;
 
+    [Tooltip("Shown when the plunger bottom is at or above the Mid notch.")]
+    public GameObject injectButton;
+
+    [Tooltip("Enemy AI reset when Inject is pressed at level 2.")]
+    public Entity entity;
+
+    [Tooltip("Triggers game over UI (used for level 3 overdose).")]
+    public CameraSwitchDebug cameraSwitch;
+
     [Tooltip("Camera used for pointer raycasts (MedicalCam).")]
     public Camera medicalCamera;
 
     [Tooltip("Optional extra lower limit as an offset from the syringe's local Y. The syringe bottom is always respected.")]
     public float minOffsetFromSyringe = -12f;
+
+    [Tooltip("How close the plunger bottom must be to Mid (or above) to count as level 2.")]
+    public float midNotchTolerance = 0.15f;
+
+    [Tooltip("How close the plunger bottom must be to High to count as level 3.")]
+    public float highNotchTolerance = 0.15f;
 
     public bool IsDragging { get; private set; }
 
@@ -34,11 +58,25 @@ public class PlungerDrag : MonoBehaviour
     void Awake()
     {
         plungerCollider = GetComponent<Collider2D>();
+
+        if (entity == null)
+            entity = FindFirstObjectByType<Entity>();
+        if (cameraSwitch == null)
+            cameraSwitch = FindFirstObjectByType<CameraSwitchDebug>();
+
+        if (injectButton != null)
+        {
+            injectButton.SetActive(false);
+            var button = injectButton.GetComponent<Button>();
+            if (button != null)
+                button.onClick.AddListener(OnInjectPressed);
+        }
     }
 
     void Start()
     {
         SyncFluidToPlunger();
+        UpdateInjectButtonVisibility();
     }
 
     void Update()
@@ -65,6 +103,7 @@ public class PlungerDrag : MonoBehaviour
     void LateUpdate()
     {
         SyncFluidToPlunger();
+        UpdateInjectButtonVisibility();
     }
 
     void TryBeginDrag(Vector2 screenPos)
@@ -94,6 +133,52 @@ public class PlungerDrag : MonoBehaviour
         Vector3 pos = transform.localPosition;
         pos.y = clampedY;
         transform.localPosition = pos;
+    }
+
+    void OnInjectPressed()
+    {
+        if (IsPlungerAtOrAboveHigh())
+        {
+            if (cameraSwitch == null)
+                cameraSwitch = FindFirstObjectByType<CameraSwitchDebug>();
+            if (cameraSwitch != null)
+                cameraSwitch.ShowDeath("You have overdosed.");
+            return;
+        }
+
+        if (entity == null)
+            entity = FindFirstObjectByType<Entity>();
+        if (entity != null)
+            entity.ResetOutsideRadar();
+    }
+
+    void UpdateInjectButtonVisibility()
+    {
+        if (injectButton == null) return;
+
+        bool atLevel2 = IsPlungerAtOrAboveMid();
+        if (injectButton.activeSelf != atLevel2)
+            injectButton.SetActive(atLevel2);
+    }
+
+    bool IsPlungerAtOrAboveMid()
+    {
+        if (midNotch == null) return false;
+
+        Transform space = transform.parent != null ? transform.parent : transform;
+        float plungerBottom = GetBoundsMinLocalY(transform, space);
+        float midY = space.InverseTransformPoint(midNotch.position).y;
+        return plungerBottom >= midY - midNotchTolerance;
+    }
+
+    bool IsPlungerAtOrAboveHigh()
+    {
+        if (highNotch == null) return false;
+
+        Transform space = transform.parent != null ? transform.parent : transform;
+        float plungerBottom = GetBoundsMinLocalY(transform, space);
+        float highY = space.InverseTransformPoint(highNotch.position).y;
+        return plungerBottom >= highY - highNotchTolerance;
     }
 
     void SyncFluidToPlunger()

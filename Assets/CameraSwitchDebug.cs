@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,10 +17,17 @@ public class CameraSwitchDebug : MonoBehaviour
     public Canvas canvas;
     public Canvas deathCanvas;
     public GameObject deathScreen;
+    [Tooltip("Optional subtitle under GAME OVER (e.g. overdose). Created at runtime if unset.")]
+    public TextMeshProUGUI deathReasonText;
 
     private bool showingRadar;
     private bool showingMedical;
     private bool gameOver;
+
+    void Awake()
+    {
+        EnsureDeathReasonText();
+    }
 
     void Start()
     {
@@ -53,11 +61,15 @@ public class CameraSwitchDebug : MonoBehaviour
             ShowMain();
     }
 
-    public void ShowDeath()
+    public void ShowDeath(string reason = null)
     {
         gameOver = true;
         showingRadar = false;
         showingMedical = false;
+
+        var entity = FindFirstObjectByType<Entity>();
+        if (entity != null)
+            entity.StopForGameOver();
 
         SetCameraActive(mainCamera, false);
         SetCameraActive(radarCamera, false);
@@ -76,6 +88,14 @@ public class CameraSwitchDebug : MonoBehaviour
 
         if (deathScreen != null)
             deathScreen.SetActive(true);
+
+        EnsureDeathReasonText();
+        if (deathReasonText != null)
+        {
+            bool hasReason = !string.IsNullOrEmpty(reason);
+            deathReasonText.text = hasReason ? reason : "";
+            deathReasonText.gameObject.SetActive(hasReason);
+        }
     }
 
     void ShowMain()
@@ -142,6 +162,45 @@ public class CameraSwitchDebug : MonoBehaviour
 
         if (deathScreen != null)
             deathScreen.SetActive(false);
+    }
+
+    void EnsureDeathReasonText()
+    {
+        if (deathReasonText != null || deathCanvas == null)
+            return;
+
+        TextMeshProUGUI title = null;
+        foreach (var tmp in deathCanvas.GetComponentsInChildren<TextMeshProUGUI>(true))
+        {
+            if (tmp.text != null
+                && tmp.text.IndexOf("GAME OVER", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                title = tmp;
+                break;
+            }
+        }
+
+        if (title == null)
+            return;
+
+        var go = new GameObject("DeathReasonText", typeof(RectTransform));
+        go.transform.SetParent(title.transform.parent, false);
+        deathReasonText = go.AddComponent<TextMeshProUGUI>();
+        deathReasonText.font = title.font;
+        deathReasonText.fontSharedMaterial = title.fontSharedMaterial;
+        deathReasonText.color = title.color;
+        deathReasonText.fontSize = 80f;
+        deathReasonText.alignment = TextAlignmentOptions.Center;
+        deathReasonText.enableWordWrapping = true;
+        deathReasonText.text = "";
+        deathReasonText.gameObject.SetActive(false);
+
+        var rt = deathReasonText.rectTransform;
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = title.rectTransform.anchoredPosition + new Vector2(0f, -140f);
+        rt.sizeDelta = new Vector2(1400f, 120f);
     }
 
     static void SetCameraActive(Camera cam, bool active)
