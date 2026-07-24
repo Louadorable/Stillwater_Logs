@@ -1,11 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Click-and-drag the plunger vertically while MedicalCam is active.
-/// The plunger bottom cannot go below the syringe bottom, and can rise
-/// as far as the High notch.
-/// </summary>
+
 [RequireComponent(typeof(Collider2D))]
 public class PlungerDrag : MonoBehaviour
 {
@@ -14,6 +10,9 @@ public class PlungerDrag : MonoBehaviour
 
     [Tooltip("High notch mark. The plunger bottom can rise up to this height.")]
     public Transform highNotch;
+
+    [Tooltip("Fluid sprite that fills the syringe up to the plunger bottom.")]
+    public Transform fluid;
 
     [Tooltip("Camera used for pointer raycasts (MedicalCam).")]
     public Camera medicalCamera;
@@ -29,6 +28,11 @@ public class PlungerDrag : MonoBehaviour
     void Awake()
     {
         plungerCollider = GetComponent<Collider2D>();
+    }
+
+    void Start()
+    {
+        SyncFluidToPlunger();
     }
 
     void Update()
@@ -50,6 +54,11 @@ public class PlungerDrag : MonoBehaviour
 
         if (mouse.leftButton.wasReleasedThisFrame)
             IsDragging = false;
+    }
+
+    void LateUpdate()
+    {
+        SyncFluidToPlunger();
     }
 
     void TryBeginDrag(Vector2 screenPos)
@@ -81,6 +90,33 @@ public class PlungerDrag : MonoBehaviour
         transform.localPosition = pos;
     }
 
+    void SyncFluidToPlunger()
+    {
+        if (fluid == null || syringe == null) return;
+
+        Transform space = transform.parent != null ? transform.parent : transform;
+        float syringeBottom = GetBoundsMinLocalY(syringe, space);
+        float syringeTop = GetBoundsMaxLocalY(syringe, space);
+        float plungerBottom = GetBoundsMinLocalY(transform, space);
+
+        // Fluid top follows the plunger bottom, clipped to the syringe square.
+        float fluidTop = Mathf.Clamp(plungerBottom, syringeBottom, syringeTop);
+        float fluidBottom = syringeBottom;
+        float height = Mathf.Max(0.001f, fluidTop - fluidBottom);
+        float centerY = (fluidTop + fluidBottom) * 0.5f;
+
+        Vector3 pos = fluid.localPosition;
+        pos.x = syringe.localPosition.x;
+        pos.y = centerY;
+        fluid.localPosition = pos;
+
+        // 1x1 center-pivot square: scale matches syringe width and fill height.
+        Vector3 scale = fluid.localScale;
+        scale.x = syringe.localScale.x;
+        scale.y = height;
+        fluid.localScale = scale;
+    }
+
     float GetPlungerBottomOffset(Transform space)
     {
         return GetBoundsMinLocalY(transform, space) - transform.localPosition.y;
@@ -92,7 +128,6 @@ public class PlungerDrag : MonoBehaviour
         float syringeBottom = GetBoundsMinLocalY(syringe, space);
         float plungerBottomOffset = GetPlungerBottomOffset(space);
 
-        // Keep the plunger's visual bottom from going under the syringe's visual bottom.
         float boundsMinY = syringeBottom - plungerBottomOffset;
         float offsetMinY = syringe.localPosition.y + minOffsetFromSyringe;
         return Mathf.Max(boundsMinY, offsetMinY);
@@ -106,11 +141,9 @@ public class PlungerDrag : MonoBehaviour
         if (highNotch != null)
         {
             float highLocalY = space.InverseTransformPoint(highNotch.position).y;
-            // Allow the plunger bottom to rise up to the High notch.
             return highLocalY - plungerBottomOffset;
         }
 
-        // Fallback if High notch isn't assigned.
         return transform.localPosition.y;
     }
 
@@ -131,6 +164,25 @@ public class PlungerDrag : MonoBehaviour
         }
 
         return minY;
+    }
+
+    static float GetBoundsMaxLocalY(Transform root, Transform space)
+    {
+        var renderers = root.GetComponentsInChildren<Renderer>();
+        if (renderers == null || renderers.Length == 0)
+            return space.InverseTransformPoint(root.position).y;
+
+        float maxY = float.NegativeInfinity;
+        foreach (var r in renderers)
+        {
+            Bounds b = r.bounds;
+            Vector3 worldTop = new Vector3(b.center.x, b.max.y, b.center.z);
+            float localY = space.InverseTransformPoint(worldTop).y;
+            if (localY > maxY)
+                maxY = localY;
+        }
+
+        return maxY;
     }
 
     float ScreenToParentLocalY(Vector2 screenPos)
