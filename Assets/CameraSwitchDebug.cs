@@ -98,7 +98,7 @@ public class CameraSwitchDebug : MonoBehaviour
         }
     }
 
-    void ShowMain()
+    public void ShowMain()
     {
         showingRadar = false;
         showingMedical = false;
@@ -145,11 +145,12 @@ public class CameraSwitchDebug : MonoBehaviour
         SetCameraActive(medicalCamera, true);
         SetCameraActive(deathCamera, false);
 
+        // Keep the main email canvas off medical so it can't steal Inject clicks.
         if (canvas != null)
         {
-            canvas.gameObject.SetActive(true);
-            if (medicalCamera != null)
-                canvas.worldCamera = medicalCamera;
+            canvas.gameObject.SetActive(false);
+            if (mainCamera != null)
+                canvas.worldCamera = mainCamera;
         }
 
         HideDeathUi();

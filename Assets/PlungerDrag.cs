@@ -1,3 +1,5 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -41,6 +43,22 @@ public class PlungerDrag : MonoBehaviour
     [Tooltip("Camera used for pointer raycasts (MedicalCam).")]
     public Camera medicalCamera;
 
+    [Header("Inject Sleep Sequence")]
+    [Tooltip("Full-screen blur that fades in after a successful inject.")]
+    public Image drugBlur;
+
+    [Tooltip("Shown after Drug Blur reaches full alpha.")]
+    public GameObject sleepyScreen;
+
+    [Tooltip("Updated with a random sleep duration (HowLongAleep TMP).")]
+    public TextMeshProUGUI howLongAsleepText;
+
+    [Tooltip("Seconds for Drug Blur alpha to reach max.")]
+    public float drugBlurFadeDuration = 1.5f;
+
+    [Tooltip("Pause on Sleepy Screen before returning to Main Cam.")]
+    public float sleepyScreenPause = 3f;
+
     [Tooltip("Optional extra lower limit as an offset from the syringe's local Y. The syringe bottom is always respected.")]
     public float minOffsetFromSyringe = -12f;
 
@@ -54,6 +72,7 @@ public class PlungerDrag : MonoBehaviour
 
     Collider2D plungerCollider;
     float dragOffsetLocalY;
+    bool injectSequenceRunning;
 
     void Awake()
     {
@@ -71,6 +90,8 @@ public class PlungerDrag : MonoBehaviour
             if (button != null)
                 button.onClick.AddListener(OnInjectPressed);
         }
+
+        ResetSleepSequenceVisuals();
     }
 
     void Start()
@@ -86,6 +107,8 @@ public class PlungerDrag : MonoBehaviour
             IsDragging = false;
             return;
         }
+
+        if (injectSequenceRunning) return;
 
         var mouse = Mouse.current;
         if (mouse == null) return;
@@ -137,6 +160,8 @@ public class PlungerDrag : MonoBehaviour
 
     void OnInjectPressed()
     {
+        if (injectSequenceRunning) return;
+
         if (IsPlungerAtOrAboveHigh())
         {
             if (cameraSwitch == null)
@@ -150,11 +175,96 @@ public class PlungerDrag : MonoBehaviour
             entity = FindFirstObjectByType<Entity>();
         if (entity != null)
             entity.ResetOutsideRadar();
+
+        StartCoroutine(SuccessfulInjectSequence());
+    }
+
+    IEnumerator SuccessfulInjectSequence()
+    {
+        injectSequenceRunning = true;
+        IsDragging = false;
+
+        if (injectButton != null)
+            injectButton.SetActive(false);
+
+        // Fade Drug Blur from 0 -> 1.
+        if (drugBlur != null)
+        {
+            drugBlur.gameObject.SetActive(true);
+            drugBlur.raycastTarget = true;
+            SetImageAlpha(drugBlur, 0f);
+
+            float duration = Mathf.Max(0.01f, drugBlurFadeDuration);
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                SetImageAlpha(drugBlur, Mathf.Clamp01(elapsed / duration));
+                yield return null;
+            }
+
+            SetImageAlpha(drugBlur, 1f);
+        }
+
+        // Show Sleepy Screen with a random sleep duration.
+        if (howLongAsleepText != null)
+            howLongAsleepText.text = FormatSleepDuration(Random.Range(20, 121));
+
+        if (sleepyScreen != null)
+            sleepyScreen.SetActive(true);
+
+        yield return new WaitForSeconds(sleepyScreenPause);
+
+        ResetSleepSequenceVisuals();
+
+        if (cameraSwitch == null)
+            cameraSwitch = FindFirstObjectByType<CameraSwitchDebug>();
+        if (cameraSwitch != null)
+            cameraSwitch.ShowMain();
+
+        injectSequenceRunning = false;
+        UpdateInjectButtonVisibility();
+    }
+
+    void ResetSleepSequenceVisuals()
+    {
+        if (drugBlur != null)
+        {
+            SetImageAlpha(drugBlur, 0f);
+            drugBlur.raycastTarget = false;
+            drugBlur.gameObject.SetActive(false);
+        }
+
+        if (sleepyScreen != null)
+            sleepyScreen.SetActive(false);
+    }
+
+    static void SetImageAlpha(Image image, float alpha)
+    {
+        Color c = image.color;
+        c.a = alpha;
+        image.color = c;
+    }
+
+    static string FormatSleepDuration(int totalMinutes)
+    {
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+
+        if (hours <= 0)
+            return minutes == 1 ? "1 minute" : $"{minutes} minutes";
+
+        string hourPart = hours == 1 ? "1 hour" : $"{hours} hours";
+        if (minutes <= 0)
+            return hourPart;
+
+        string minutePart = minutes == 1 ? "1 minute" : $"{minutes} minutes";
+        return $"{hourPart} {minutePart}";
     }
 
     void UpdateInjectButtonVisibility()
     {
-        if (injectButton == null) return;
+        if (injectButton == null || injectSequenceRunning) return;
 
         bool atLevel2 = IsPlungerAtOrAboveMid();
         if (injectButton.activeSelf != atLevel2)
