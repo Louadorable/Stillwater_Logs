@@ -77,8 +77,8 @@ public class TypingManager : MonoBehaviour
         var keyboard = Keyboard.current;
         if (keyboard == null) return;
 
-        // Debug: F8 autocompletes the current player email
-        if (keyboard.f8Key.wasPressedThisFrame)
+        // Debug: F2 autocompletes the current player email
+        if (keyboard.f2Key.wasPressedThisFrame)
         {
             CompleteTyping();
             return;

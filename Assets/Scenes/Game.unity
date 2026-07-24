@@ -257,6 +257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraSwitchDebug
   mainCamera: {fileID: 519420031}
   radarCamera: {fileID: 405580645}
+  medicalCamera: {fileID: 186612233}
   deathCamera: {fileID: 1135395628}
   canvas: {fileID: 910887918}
   deathCanvas: {fileID: 1673019397}

@@ -3,18 +3,21 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// F7 toggles Main Camera and RadarCam during play.
+/// F6 toggles Main Camera and MedicalCam during play.
 /// ShowDeath() switches to the game-over DeathCam / death UI.
 /// </summary>
 public class CameraSwitchDebug : MonoBehaviour
 {
     public Camera mainCamera;
     public Camera radarCamera;
+    public Camera medicalCamera;
     public Camera deathCamera;
     public Canvas canvas;
     public Canvas deathCanvas;
     public GameObject deathScreen;
 
     private bool showingRadar;
+    private bool showingMedical;
     private bool gameOver;
 
     void Start()
@@ -36,15 +39,25 @@ public class CameraSwitchDebug : MonoBehaviour
             else
                 ShowRadar();
         }
+
+        if (keyboard.f6Key.wasPressedThisFrame)
+        {
+            if (showingMedical)
+                ShowMain();
+            else
+                ShowMedical();
+        }
     }
 
     public void ShowDeath()
     {
         gameOver = true;
         showingRadar = false;
+        showingMedical = false;
 
         SetCameraActive(mainCamera, false);
         SetCameraActive(radarCamera, false);
+        SetCameraActive(medicalCamera, false);
         SetCameraActive(deathCamera, true);
 
         if (canvas != null)
@@ -64,8 +77,10 @@ public class CameraSwitchDebug : MonoBehaviour
     void ShowMain()
     {
         showingRadar = false;
+        showingMedical = false;
         SetCameraActive(mainCamera, true);
         SetCameraActive(radarCamera, false);
+        SetCameraActive(medicalCamera, false);
         SetCameraActive(deathCamera, false);
 
         if (canvas != null)
@@ -81,8 +96,10 @@ public class CameraSwitchDebug : MonoBehaviour
     void ShowRadar()
     {
         showingRadar = true;
+        showingMedical = false;
         SetCameraActive(mainCamera, false);
         SetCameraActive(radarCamera, true);
+        SetCameraActive(medicalCamera, false);
         SetCameraActive(deathCamera, false);
 
         if (canvas != null)
@@ -90,6 +107,25 @@ public class CameraSwitchDebug : MonoBehaviour
             canvas.gameObject.SetActive(true);
             if (radarCamera != null)
                 canvas.worldCamera = radarCamera;
+        }
+
+        HideDeathUi();
+    }
+
+    void ShowMedical()
+    {
+        showingRadar = false;
+        showingMedical = true;
+        SetCameraActive(mainCamera, false);
+        SetCameraActive(radarCamera, false);
+        SetCameraActive(medicalCamera, true);
+        SetCameraActive(deathCamera, false);
+
+        if (canvas != null)
+        {
+            canvas.gameObject.SetActive(true);
+            if (medicalCamera != null)
+                canvas.worldCamera = medicalCamera;
         }
 
         HideDeathUi();
