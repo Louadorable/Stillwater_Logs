@@ -5596,6 +5596,8 @@ MonoBehaviour:
   syringe: {fileID: 264963973}
   highNotch: {fileID: 1205750699}
   fluid: {fileID: 1519336926}
+  pot: {fileID: 179782686}
+  potFluid: {fileID: 2130259931}
   medicalCamera: {fileID: 186612233}
   minOffsetFromSyringe: -12
 --- !u!1 &1287724335

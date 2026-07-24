@@ -14,6 +14,12 @@ public class PlungerDrag : MonoBehaviour
     [Tooltip("Fluid sprite that fills the syringe up to the plunger bottom.")]
     public Transform fluid;
 
+    [Tooltip("Pot container that bounds the pot fluid.")]
+    public Transform pot;
+
+    [Tooltip("Fluid in the pot. Lowers as syringe fluid rises, and rises as syringe fluid lowers.")]
+    public Transform potFluid;
+
     [Tooltip("Camera used for pointer raycasts (MedicalCam).")]
     public Camera medicalCamera;
 
@@ -115,6 +121,34 @@ public class PlungerDrag : MonoBehaviour
         scale.x = syringe.localScale.x;
         scale.y = height;
         fluid.localScale = scale;
+
+        float syringeCapacity = Mathf.Max(0.001f, syringeTop - syringeBottom);
+        float syringeFill = Mathf.Clamp01(height / syringeCapacity);
+        SyncPotFluid(space, syringeFill);
+    }
+
+    void SyncPotFluid(Transform space, float syringeFill)
+    {
+        if (pot == null || potFluid == null) return;
+
+        float potBottom = GetBoundsMinLocalY(pot, space);
+        float potTop = GetBoundsMaxLocalY(pot, space);
+        float potCapacity = Mathf.Max(0.001f, potTop - potBottom);
+
+        // Inverse of syringe fill: more in the syringe means less in the pot.
+        float potHeight = Mathf.Max(0.001f, potCapacity * (1f - syringeFill));
+        float potFluidTop = potBottom + potHeight;
+        float centerY = (potFluidTop + potBottom) * 0.5f;
+
+        Vector3 pos = potFluid.localPosition;
+        pos.x = pot.localPosition.x;
+        pos.y = centerY;
+        potFluid.localPosition = pos;
+
+        Vector3 scale = potFluid.localScale;
+        scale.x = pot.localScale.x;
+        scale.y = potHeight;
+        potFluid.localScale = scale;
     }
 
     float GetPlungerBottomOffset(Transform space)
