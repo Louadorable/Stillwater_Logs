@@ -5594,9 +5594,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlungerDrag
   syringe: {fileID: 264963973}
+  highNotch: {fileID: 1205750699}
   medicalCamera: {fileID: 186612233}
   minOffsetFromSyringe: -12
-  maxOffsetFromSyringe: -2
 --- !u!1 &1287724335
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,23 +3,23 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// Click-and-drag the plunger vertically while MedicalCam is active.
-/// Vertical travel is clamped relative to the syringe; the plunger bottom
-/// cannot go below the syringe bottom.
+/// The plunger bottom cannot go below the syringe bottom, and can rise
+/// as far as the High notch.
 /// </summary>
 [RequireComponent(typeof(Collider2D))]
 public class PlungerDrag : MonoBehaviour
 {
-    [Tooltip("Syringe transform used as the height reference for clamp limits.")]
+    [Tooltip("Syringe transform used as the lower height reference.")]
     public Transform syringe;
+
+    [Tooltip("High notch mark. The plunger bottom can rise up to this height.")]
+    public Transform highNotch;
 
     [Tooltip("Camera used for pointer raycasts (MedicalCam).")]
     public Camera medicalCamera;
 
     [Tooltip("Optional extra lower limit as an offset from the syringe's local Y. The syringe bottom is always respected.")]
     public float minOffsetFromSyringe = -12f;
-
-    [Tooltip("Highest allowed local Y as an offset from the syringe's local Y.")]
-    public float maxOffsetFromSyringe = -2f;
 
     public bool IsDragging { get; private set; }
 
@@ -73,24 +73,45 @@ public class PlungerDrag : MonoBehaviour
         float targetY = localMouseY + dragOffsetLocalY;
 
         float minY = GetMinLocalY();
-        float maxY = syringe.localPosition.y + Mathf.Max(minOffsetFromSyringe, maxOffsetFromSyringe);
-        float clampedY = Mathf.Clamp(targetY, minY, maxY);
+        float maxY = GetMaxLocalY();
+        float clampedY = Mathf.Clamp(targetY, minY, Mathf.Max(minY, maxY));
 
         Vector3 pos = transform.localPosition;
         pos.y = clampedY;
         transform.localPosition = pos;
     }
 
+    float GetPlungerBottomOffset(Transform space)
+    {
+        return GetBoundsMinLocalY(transform, space) - transform.localPosition.y;
+    }
+
     float GetMinLocalY()
     {
         Transform space = transform.parent != null ? transform.parent : transform;
         float syringeBottom = GetBoundsMinLocalY(syringe, space);
-        float plungerBottomOffset = GetBoundsMinLocalY(transform, space) - transform.localPosition.y;
+        float plungerBottomOffset = GetPlungerBottomOffset(space);
 
         // Keep the plunger's visual bottom from going under the syringe's visual bottom.
         float boundsMinY = syringeBottom - plungerBottomOffset;
-        float offsetMinY = syringe.localPosition.y + Mathf.Min(minOffsetFromSyringe, maxOffsetFromSyringe);
+        float offsetMinY = syringe.localPosition.y + minOffsetFromSyringe;
         return Mathf.Max(boundsMinY, offsetMinY);
+    }
+
+    float GetMaxLocalY()
+    {
+        Transform space = transform.parent != null ? transform.parent : transform;
+        float plungerBottomOffset = GetPlungerBottomOffset(space);
+
+        if (highNotch != null)
+        {
+            float highLocalY = space.InverseTransformPoint(highNotch.position).y;
+            // Allow the plunger bottom to rise up to the High notch.
+            return highLocalY - plungerBottomOffset;
+        }
+
+        // Fallback if High notch isn't assigned.
+        return transform.localPosition.y;
     }
 
     static float GetBoundsMinLocalY(Transform root, Transform space)
